@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carte de Restaurant Japonais</title>
+    <title>Carte</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -62,9 +62,10 @@
 </head>
 <body>
     <header>
-        <h1>Restaurant Japonais</h1>
+        <img src="SOURCES/logo.png" alt="Logo" style="height: 50px; vertical-align: middle; position: relative; top: -10px;">
+        <h1 style="display: inline; margin-left: 10px;">Manger des Sushis</h1>
     </header>
-    <nav>
+    <nav style="display: flex; flex-wrap: wrap; justify-content: center;">
         <a href="#entrees">Entrées</a>
         <a href="#accompagnement">Accompagnement et Wok</a>
         <a href="#yakitori">Yakitori</a>
@@ -80,13 +81,13 @@
                 <img src="images/salade_wakame.jpg" alt="Salade de Wakame" style="width:100px;height:100px;">
                 <span>01 Salade de Wakame 1 pièce</span>
                 <input type="checkbox" name="salade_wakame">
-                <input type="number" name="quantity_salade_wakame" min="1" max="10" value="1">
+                <input type="number" name="quantity_salade_wakame" min="1" max="10" value="0">
             </div>
             <div class="menu-item">
                 <img src="images/soupe_miso.jpg" alt="Soupe Miso" style="width:100px;height:100px;">
                 <span>02 Soupe Miso 1 pièce</span>
                 <input type="checkbox" name="soupe_miso">
-                <input type="number" name="quantity_soupe_miso" min="1" max="10" value="1">
+                <input type="number" name="quantity_soupe_miso" min="1" max="10" value="0">
             </div>
         </div>
         <div id="accompagnement" class="menu-section">
@@ -95,13 +96,13 @@
                 <img src="images/riz_nature.jpg" alt="Riz Nature" style="width:100px;height:100px;">
                 <span>03 Riz Nature 1 pièce</span>
                 <input type="checkbox" name="riz_nature">
-                <input type="number" name="quantity_riz_nature" min="1" max="10" value="1">
+                <input type="number" name="quantity_riz_nature" min="1" max="10" value="0">
             </div>
             <div class="menu-item">
                 <img src="images/nouilles_sautées.jpg" alt="Nouilles Sautées" style="width:100px;height:100px;">
                 <span>04 Nouilles Sautées 1 pièce</span>
                 <input type="checkbox" name="nouilles_sautées">
-                <input type="number" name="quantity_nouilles_sautées" min="1" max="10" value="1">
+                <input type="number" name="quantity_nouilles_sautées" min="1" max="10" value="0">
             </div>
         </div>
         <div id="yakitori" class="menu-section">
@@ -110,13 +111,13 @@
                 <img src="images/yakitori_poulet.jpg" alt="Yakitori Poulet" style="width:100px;height:100px;">
                 <span>05 Yakitori Poulet 2 pièces</span>
                 <input type="checkbox" name="yakitori_poulet">
-                <input type="number" name="quantity_yakitori_poulet" min="1" max="10" value="1">
+                <input type="number" name="quantity_yakitori_poulet" min="1" max="10" value="0">
             </div>
             <div class="menu-item">
                 <img src="images/yakitori_boeuf.jpg" alt="Yakitori Boeuf" style="width:100px;height:100px;">
                 <span>06 Yakitori Boeuf 2 pièces</span>
                 <input type="checkbox" name="yakitori_boeuf">
-                <input type="number" name="quantity_yakitori_boeuf" min="1" max="10" value="1">
+                <input type="number" name="quantity_yakitori_boeuf" min="1" max="10" value="0">
             </div>
         </div>
         <div id="sushi" class="menu-section">
@@ -125,13 +126,13 @@
                 <img src="images/sushi_saumon.jpg" alt="Sushi Saumon" style="width:100px;height:100px;">
                 <span>07 Sushi Saumon 2 pièces</span>
                 <input type="checkbox" name="sushi_saumon">
-                <input type="number" name="quantity_sushi_saumon" min="1" max="10" value="1">
+                <input type="number" name="quantity_sushi_saumon" min="1" max="10" value="0">
             </div>
             <div class="menu-item">
                 <img src="images/sushi_thon.jpg" alt="Sushi Thon" style="width:100px;height:100px;">
                 <span>08 Sushi Thon 2 pièces</span>
                 <input type="checkbox" name="sushi_thon">
-                <input type="number" name="quantity_sushi_thon" min="1" max="10" value="1">
+                <input type="number" name="quantity_sushi_thon" min="1" max="10" value="0">
             </div>
         </div>
         <div id="temaki" class="menu-section">
@@ -140,13 +141,13 @@
                 <img src="images/temaki_saumon.jpg" alt="Temaki Saumon" style="width:100px;height:100px;">
                 <span>09 Temaki Saumon 1 pièce</span>
                 <input type="checkbox" name="temaki_saumon">
-                <input type="number" name="quantity_temaki_saumon" min="1" max="10" value="1">
+                <input type="number" name="quantity_temaki_saumon" min="1" max="10" value="0">
             </div>
             <div class="menu-item">
                 <img src="images/temaki_thon.jpg" alt="Temaki Thon" style="width:100px;height:100px;">
                 <span>10 Temaki Thon 1 pièce</span>
                 <input type="checkbox" name="temaki_thon">
-                <input type="number" name="quantity_temaki_thon" min="1" max="10" value="1">
+                <input type="number" name="quantity_temaki_thon" min="1" max="10" value="0">
             </div>
         </div>
         <div id="maki_california" class="menu-section">
@@ -155,13 +156,13 @@
                 <img src="images/maki_saumon.jpg" alt="Maki Saumon" style="width:100px;height:100px;">
                 <span>11 Maki Saumon 6 pièces</span>
                 <input type="checkbox" name="maki_saumon">
-                <input type="number" name="quantity_maki_saumon" min="1" max="10" value="1">
+                <input type="number" name="quantity_maki_saumon" min="1" max="10" value="0">
             </div>
             <div class="menu-item">
                 <img src="images/california_thon.jpg" alt="California Thon" style="width:100px;height:100px;">
                 <span>12 California Thon 6 pièces</span>
                 <input type="checkbox" name="california_thon">
-                <input type="number" name="quantity_california_thon" min="1" max="10" value="1">
+                <input type="number" name="quantity_california_thon" min="1" max="10" value="0">
             </div>
         </div>
         <div id="desserts" class="menu-section">
@@ -170,19 +171,31 @@
                 <img src="images/mochi.jpg" alt="Mochi" style="width:100px;height:100px;">
                 <span>13 Mochi 2 pièces</span>
                 <input type="checkbox" name="mochi">
-                <input type="number" name="quantity_mochi" min="1" max="10" value="1">
+                <input type="number" name="quantity_mochi" min="1" max="10" value="0">
             </div>
             <div class="menu-item">
                 <img src="images/daifuku.jpg" alt="Daifuku" style="width:100px;height:100px;">
                 <span>14 Daifuku 2 pièces</span>
                 <input type="checkbox" name="daifuku">
-                <input type="number" name="quantity_daifuku" min="1" max="10" value="1">
+                <input type="number" name="quantity_daifuku" min="1" max="10" value="0">
             </div>
         </div>
     </div>
 </body>
 </html>
-<button onclick="topFunction()" id="topBtn" title="Go to top">Haut de page</button>
+<script>
+    document.querySelectorAll('.menu-item input[type="checkbox"]').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            var quantityInput = this.nextElementSibling;
+            if (this.checked) {
+                quantityInput.value = 1;
+            } else {
+                quantityInput.value = 0;
+            }
+        });
+    });
+</script>
+<button onclick="topFunction()" id="topBtn" title="Go to top">⬆️</button>
 
 <script>
     // Get the button
@@ -193,22 +206,21 @@
 
     function scrollFunction() {
         if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            mybutton.style.display = "block";
+            mybutton.style.opacity = "1";
         } else {
-            mybutton.style.display = "none";
+            mybutton.style.opacity = "0";
         }
     }
 
-    // When the user clicks on the button, scroll to the top of the document
+    // When the user clicks on the button, scroll to the top of the document with smooth animation
     function topFunction() {
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
 
 <style>
     #topBtn {
-        display: none;
+        display: block;
         position: fixed;
         bottom: 20px;
         right: 30px;
@@ -221,6 +233,8 @@
         cursor: pointer;
         padding: 15px;
         border-radius: 4px;
+        opacity: 0;
+        transition: opacity 0.5s;
     }
 
     #topBtn:hover {
