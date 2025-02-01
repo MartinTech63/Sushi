@@ -560,7 +560,7 @@
         });
     });
 </script>
-<button onclick="topFunction()" id="topBtn" title="Go to top">⬆️</button>
+<button onclick="topFunction()" id="topBtn" title="Retour en haut">⬆️</button>
 
 <script>
     // Get the button
@@ -662,6 +662,40 @@
     }
 
     #orderSummaryBtn:hover {
+        background-color: #555;
+    }
+</style>
+<button onclick="resetOrder()" id="resetBtn" title="Réinitialiser la commande">🗑️</button>
+
+<script>
+    function resetOrder() {
+        document.querySelectorAll('.menu-item input[type="checkbox"]').forEach(function(checkbox) {
+            checkbox.checked = false;
+        });
+        document.querySelectorAll('.menu-item input[type="number"]').forEach(function(numberInput) {
+            numberInput.value = 0;
+        });
+    }
+</script>
+
+<style>
+    #resetBtn {
+        display: block;
+        position: fixed;
+        bottom: 20px;
+        left: 100px;
+        z-index: 99;
+        font-size: 18px;
+        border: none;
+        outline: none;
+        background-color: #d32f2f;
+        color: white;
+        cursor: pointer;
+        padding: 15px;
+        border-radius: 4px;
+    }
+
+    #resetBtn:hover {
         background-color: #555;
     }
 </style>
