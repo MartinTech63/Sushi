@@ -632,7 +632,7 @@
         var link = document.createElement('a');
         link.href = img;
         var today = new Date();
-        var date = today.getDate() + ' ' + (today.getMonth() + 1) + ' ' + today.getFullYear();
+        var date = today.getDate() + '.' + (today.getMonth() + 1) + '.' + today.getFullYear();
         link.download = 'Liste de la commande du ' + date + '.png';
         link.click();
     }
