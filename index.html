@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carte</title>
+    <title>Manger des Sushis</title>
+    <link rel="icon" href="SOURCES/logo.png" type="image/png">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -542,11 +543,35 @@
             </div>
         </div>
     </div>
-    <div style="width: 100; background-color: #ff9800; padding: 20px; text-align: center; margin-top: 20px; border-top: 2px solid #333; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); color: white;">
+    <footer style="width: 100; background-color: #ff9800; padding: 20px; text-align: center; margin-top: 20px; border-top: 2px solid #333; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); color: white;">
         <h2 style="margin: 0; font-size: 1rem;">Fait avec le ❤️ - Martin Tech 2025</h2>
-        <h3 style="margin: 0; font-size: 0.8rem;">Version : v08.02.25</h3>
-    </div>
+        <h3 style="margin: 0; font-size: 0.8rem;">
+            <a href="https://github.com/MartinTech63/Sushi" target="_blank" style="color: white; text-decoration: none; text-decoration: underline;">Version : v08.02.25</a>
+        </h3></h3>
+    </footer>
 </body>
+
+<script>
+    function adjustButtonPosition() {
+        var footer = document.querySelector('footer');
+        var footerRect = footer.getBoundingClientRect();
+        var windowHeight = window.innerHeight;
+
+        var buttons = document.querySelectorAll('#topBtn, #orderSummaryBtn, #resetBtn');
+        buttons.forEach(function(button) {
+            var buttonRect = button.getBoundingClientRect();
+            if (footerRect.top < windowHeight) {
+                button.style.bottom = (windowHeight - footerRect.top + 20) + 'px';
+            } else {
+                button.style.bottom = '20px';
+            }
+        });
+    }
+
+    window.addEventListener('scroll', adjustButtonPosition);
+    window.addEventListener('resize', adjustButtonPosition);
+    adjustButtonPosition();
+</script>
 
 </html>
 <script>
