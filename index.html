@@ -654,7 +654,17 @@
             if (checkbox.checked) {
                 var itemName = item.querySelector('span').innerText;
                 var quantity = quantityInput.value;
-                orderSummary.push({ name: itemName, quantity: quantity });
+                if (itemName === 'Boule de glace') {
+                    item.querySelectorAll('input[type="checkbox"]').forEach(function(flavorCheckbox) {
+                        if (flavorCheckbox.checked) {
+                            var flavorName = flavorCheckbox.nextSibling.textContent.trim();
+                            var flavorQuantity = item.querySelector('#' + flavorCheckbox.getAttribute('data-target')).value;
+                            orderSummary.push({ name: itemName + ' - ' + flavorName, quantity: flavorQuantity });
+                        }
+                    });
+                } else {
+                    orderSummary.push({ name: itemName, quantity: quantity });
+                }
             }
         });
 
