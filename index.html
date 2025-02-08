@@ -161,9 +161,15 @@
             <h2>Entrées</h2>
             <div class="menu-item">
                 <img src="SOURCES/salade_de_choux.jpg" alt="Salade de Choux">
-                <span>01 | Salade de Choux (1 pièce)</span>
+                <span>01 | Salade de Choux</span>
                 <input type="checkbox" name="salade_choux">
                 <input type="number" name="quantity_salade_choux" min="1" max="10" value="0">
+            </div>
+            <div class="menu-item">
+                <img src="SOURCES/soupe_miso.jpg" alt="Soupe Miso">
+                <span>02 | Soupe Miso</span>
+                <input type="checkbox" name="soupe_miso">
+                <input type="number" name="quantity_soupe_miso" min="1" max="10" value="0">
             </div>
             <div class="menu-item">
                 <img src="SOURCES/beignet_de_poulet.jpg" alt="Beignet de Poulet">
@@ -433,7 +439,7 @@
                 <input type="number" name="quantity_california_saumon_avocat" min="1" max="10" value="0">
             </div>
             <div class="menu-item">
-                <img src="SOURCES/california_thon_mayo_avocat.jpg" alt="California Thon Cuit Mayonnaise Avocat">
+                <img src="SOURCES/california_thon_cuit_mayonnaise_avocat.jpg" alt="California Thon Cuit Mayonnaise Avocat">
                 <span>52 | California Thon Cuit Mayonnaise Avocat (4 pièces)</span>
                 <input type="checkbox" name="california_thon_mayo_avocat">
                 <input type="number" name="quantity_california_thon_mayo_avocat" min="1" max="10" value="0">
@@ -451,13 +457,19 @@
                 <input type="number" name="quantity_california_crevette_avocat" min="1" max="10" value="0">
             </div>
             <div class="menu-item">
-                <img src="SOURCES/california_saumon_crispy.jpg" alt="California Saumon Avocat Crispy">
-                <span>56 | California Saumon Avocat Crispy (4 pièces)</span>
-                <input type="checkbox" name="california_saumon_crispy">
-                <input type="number" name="quantity_california_saumon_crispy" min="1" max="10" value="0">
+                <img src="SOURCES/california_saumon_avocat_fromage.jpg" alt="California Saumon Avocat Fromage">
+                <span>55 | California Saumon Avocat Fromage (4 pièces)</span>
+                <input type="checkbox" name="california_saumon_avocat_fromage">
+                <input type="number" name="quantity_california_saumon_avocat_fromage" min="1" max="10" value="0">
             </div>
             <div class="menu-item">
-                <img src="SOURCES/california_surimi_frit.jpg" alt="California Surimi Avocat Frit">
+                <img src="SOURCES/california_saumon_avocat_crispy.jpg" alt="California Saumon Avocat Crispy">
+                <span>56 | California Saumon Avocat Crispy (4 pièces)</span>
+                <input type="checkbox" name="california_saumon_avocat_crispy">
+                <input type="number" name="quantity_california_saumon_avocat_crispy" min="1" max="10" value="0">
+            </div>
+            <div class="menu-item">
+                <img src="SOURCES/california_surimi_avocat_frit.jpg" alt="California Surimi Avocat Frit">
                 <span>57 | California Surimi Avocat Frit (4 pièces)</span>
                 <input type="checkbox" name="california_surimi_frit">
                 <input type="number" name="quantity_california_surimi_frit" min="1" max="10" value="0">
@@ -530,7 +542,12 @@
             </div>
         </div>
     </div>
+    <div style="width: 100; background-color: #ff9800; padding: 20px; text-align: center; margin-top: 20px; border-top: 2px solid #333; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); color: white;">
+        <h2 style="margin: 0; font-size: 1rem;">Fait avec le ❤️ - Martin Tech 2025</h2>
+        <h3 style="margin: 0; font-size: 0.8rem;">Version : v08.02.25</h3>
+    </div>
 </body>
+
 </html>
 <script>
     document.querySelectorAll('.menu-item input[type="checkbox"]').forEach(function(checkbox) {
@@ -594,6 +611,7 @@
         border-radius: 4px;
         opacity: 0;
         transition: opacity 0.5s;
+        border: 1px solid black;
     }
 
     #topBtn:hover {
@@ -653,6 +671,7 @@
         cursor: pointer;
         padding: 15px;
         border-radius: 4px;
+        border: 1px solid black;
     }
 
     #orderSummaryBtn:hover {
@@ -687,9 +706,11 @@
         cursor: pointer;
         padding: 15px;
         border-radius: 4px;
+        border: 1px solid black;
     }
 
     #resetBtn:hover {
         background-color: #555;
     }
 </style>
+
