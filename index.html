@@ -10,9 +10,15 @@
 </head>
 <body>
     <header style="top: 0; z-index: 1000;">
-        <img src="SOURCES/logo.png" alt="Logo" style="height: 50px; vertical-align: middle; position: relative; top: -12px;">
+        <img src="SOURCES/logo.png" alt="Logo" style="height: 50px; vertical-align: middle; position: relative; top: -12px;" onclick="playSound()">
         <h1 style="display: inline; margin-left: 10px;">Manger des Sushis</h1>
     </header>
+    <audio id="logoSound" src="SOURCES/cartoon_bite_sound_effect.mp3"></audio>
+    <script>
+        function playSound() {
+            document.getElementById('logoSound').play();
+        }
+    </script>
     <nav style="top: 0; display: flex; flex-wrap: wrap; justify-content: center; z-index: 1000;">
         <a href="#entrees">Entrées</a>
         <a href="#accompagnement">Accompagnement et Wok</a>
