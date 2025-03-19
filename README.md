@@ -1,7 +1,7 @@
 # 🍣 Manger des Sushis
 
 ## 📜 Description
-**Manger des Sushis** est un projet visant à faciliter la prise de commande au **Hanami**. Il inclut des fonctionnalités pour passer des commandes, suivre les commandes en cours et gérer les paiements. Chaque personne peut générer une commande individuelle pour retrouver facilement ce qu'elle a commandé lors du service.
+**Manger des Sushis** est un projet visant à faciliter la prise de commande au **Hanami**. Il inclut une fonctionnalité permettant d'enregistrer sa commande. Chaque personne peut générer une commande individuelle afin de retrouver facilement ce qu'elle a commandé lors du service.
 
 ## ✨ Fonctionnalités
 
