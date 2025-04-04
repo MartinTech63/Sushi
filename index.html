@@ -6,19 +6,22 @@
     <title>Manger des Sushis</title>
     <link rel="icon" href="SOURCES/logo.png" type="image/png">
     <link rel="stylesheet" href="styles.css">   
-    <script src="scripts.js"></script>
+    <script src="SCRIPTS/clear.js" defer></script>
+    <script src="SCRIPTS/commande.js" defer></script>
+    <script src="SCRIPTS/gototop.js" defer></script>
+    <script src="SCRIPTS/logo.js" defer></script>
+    <script src="SCRIPTS/petales.js" defer></script>
+    <script src="SCRIPTS/popup.js" defer></script>
+    <script src="SCRIPTS/ui.js" defer></script>
 </head>
+
 <body>
     <header style="top: 0; z-index: 1000;">
         <img src="SOURCES/logo.png" alt="Logo" style="height: 50px; vertical-align: middle; position: relative; top: -12px;" onclick="playSound()">
         <h1 style="display: inline; margin-left: 10px;">Manger des Sushis</h1>
     </header>
     <audio id="logoSound" src="SOURCES/cartoon_bite_sound_effect.mp3"></audio>
-    <script>
-        function playSound() {
-            document.getElementById('logoSound').play();
-        }
-    </script>
+
     <nav style="top: 0; display: flex; flex-wrap: wrap; justify-content: center; z-index: 1000;">
         <a href="#entrees">Entrées</a>
         <a href="#accompagnement">Accompagnement et Wok</a>
@@ -28,6 +31,37 @@
         <a href="#maki_california">Maki & California</a>
         <a href="#desserts">Desserts</a>
     </nav>
+
+    <div id="popupOverlay" style="display: none;">
+        <div class="popupBox" style="position: relative; padding-bottom: 30px;">
+            <div style="text-align: center;">
+                <img src="SOURCES/logo.png" alt="Logo" style="height: 100px; margin-bottom: 10px;">
+                <h2>Bienvenue sur Manger des Sushis&nbsp;!</h2>
+                <hr style="margin: 10px 0;">
+                <p>
+                    <strong>Manger des Sushis</strong> est un projet visant à faciliter la prise de commande au <strong>Hanami</strong>.<br>
+                    Il inclut une fonctionnalité permettant d'enregistrer sa commande. <br>
+                    Chaque personne peut générer une commande individuelle afin de retrouver facilement ce qu'elle a commandé lors du service.
+                </p>
+                <hr style="margin: 10px 0;">
+                <div id="petalSwitchContainer" class="switch-container" style="margin-top: 20px;">
+                    <span>Activer les pétales 🌸</span>
+                    <label class="switch">
+                        <input type="checkbox" id="petalToggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <button onclick="closePopup()" class="popup-btn" style="margin-top: 20px;">Fermer</button>
+            </div>
+            <!-- Version du site en bas à droite -->
+            <p style="position: absolute; bottom: 0px; right: 10px; color: gray; font-size: 12px;">
+                <a href="https://github.com/MartinTech63/Sushi" target="_blank" style="text-decoration: underline; color: gray;">
+                    v04.04.25
+                </a>
+            </p>
+        </div>
+    </div>
+  
     <div class="container">
         <div id="entrees" class="menu-section">
             <h2>Entrées</h2>
@@ -231,7 +265,6 @@
                 <input type="number" name="quantity_maquereau" min="1" max="10" value="0">
             </div>
         </div>
-
         <div id="temaki" class="menu-section">
             <h2>Temaki</h2>
             <div class="menu-item">
@@ -259,7 +292,6 @@
                 <input type="number" name="quantity_concombre_avocat" min="1" max="10" value="0">
             </div>
         </div>
-        
         <div id="maki_california" class="menu-section">
             <h2>Maki & California</h2>
             <div class="menu-item">
@@ -353,7 +385,6 @@
                 <input type="number" name="quantity_california_fromage_avocat" min="1" max="10" value="0">
             </div>            
         </div>
-
         <div id="desserts" class="menu-section">
             <h2>Desserts</h2>
             <div class="menu-item">
@@ -417,209 +448,20 @@
     <footer style="width: 100; background-color: #ff9800; padding: 20px; text-align: center; margin-top: 20px; border-top: 2px solid #333; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); color: white;">
         <h2 style="margin: 0; font-size: 1rem;">Fait avec le ❤️ - Martin Tech 2025</h2>
         <h3 style="margin: 0; font-size: 0.8rem;">
-            <a href="https://github.com/MartinTech63/Sushi" target="_blank" style="color: white; text-decoration: none; text-decoration: underline;">Version : v19.03.25</a>
+            <a href="https://github.com/MartinTech63/Sushi" target="_blank" style="color: white; text-decoration: none; text-decoration: underline;">Version : v04.004.25</a>
         </h3></h3>
     </footer>
 </body>
 
 <canvas id="petalsCanvas" style="position: fixed; top: 0; left: 0; pointer-events: none;"></canvas>
 
-<script>
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth();
-    const currentDay = currentDate.getDate();
+<canvas id="petalsCanvas" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 0;"></canvas>
 
-    // Check if the current date is between the 25th of March and the 10th of May
-    if ((currentMonth === 2 && currentDay >= 25) || (currentMonth === 3) || (currentMonth === 4 && currentDay <= 10)) {
-        const canvas = document.getElementById('petalsCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+<canvas id="petalsCanvas" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 0;"></canvas>
 
-        const petals = [];
-        const petalCount = 50;
-
-        class Petal {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height - canvas.height;
-                this.size = Math.random() * 5 + 5;
-                this.speed = Math.random() * 2 + 1;
-                this.angle = Math.random() * Math.PI * 2;
-                this.spin = Math.random() * 0.05 - 0.025;
-            }
-
-            update() {
-                this.y += this.speed;
-                this.angle += this.spin;
-                if (this.y > canvas.height) {
-                    this.y = -this.size;
-                    this.x = Math.random() * canvas.width;
-                }
-            }
-
-            draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.angle);
-                ctx.fillStyle = 'rgba(255, 182, 193, 0.8)';
-                ctx.beginPath();
-                ctx.ellipse(0, 0, this.size, this.size / 2, 0, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-
-        function createPetals() {
-            for (let i = 0; i < petalCount; i++) {
-                petals.push(new Petal());
-            }
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            petals.forEach(petal => {
-                petal.update();
-                petal.draw();
-            });
-            requestAnimationFrame(animate);
-        }
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        createPetals();
-        animate();
-    }
-</script>
-
-<script>
-    function adjustButtonPosition() {
-        var footer = document.querySelector('footer');
-        var footerRect = footer.getBoundingClientRect();
-        var windowHeight = window.innerHeight;
-
-        var buttons = document.querySelectorAll('#topBtn, #orderSummaryBtn, #resetBtn');
-        buttons.forEach(function(button) {
-            var buttonRect = button.getBoundingClientRect();
-            if (footerRect.top < windowHeight) {
-                button.style.bottom = (windowHeight - footerRect.top + 20) + 'px';
-            } else {
-                button.style.bottom = '20px';
-            }
-        });
-    }
-
-    window.addEventListener('scroll', adjustButtonPosition);
-    window.addEventListener('resize', adjustButtonPosition);
-    adjustButtonPosition();
-</script>
+<canvas id="petalsCanvas" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 0;"></canvas>
 
 </html>
-<script>
-    document.querySelectorAll('.menu-item input[type="checkbox"]').forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() {
-            var targetId = this.getAttribute('data-target');
-            if (targetId) {
-                var quantityInput = document.getElementById(targetId);
-                if (this.checked) {
-                    quantityInput.value = 1;
-                } else {
-                    quantityInput.value = 0;
-                }
-            } else {
-                var quantityInput = this.nextElementSibling;
-                if (this.checked) {
-                    quantityInput.value = 1;
-                } else {
-                    quantityInput.value = 0;
-                }
-            }
-        });
-    });
-</script>
 <button onclick="topFunction()" id="topBtn" title="Retour en haut">⬆️</button>
-
-<script>
-    // Get the button
-    var mybutton = document.getElementById("topBtn");
-
-    // When the user scrolls down 20px from the top of the document, show the button
-    window.onscroll = function() {scrollFunction()};
-
-    function scrollFunction() {
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            mybutton.style.opacity = "1";
-        } else {
-            mybutton.style.opacity = "0";
-        }
-    }
-
-    // When the user clicks on the button, scroll to the top of the document with smooth animation
-    function topFunction() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-</script>
-
-<button onclick="generateOrderSummary()" id="orderSummaryBtn" title="Générer une liste">📝</button>
-
-<script>
-    function generateOrderSummary() {
-        var orderSummary = [];
-        document.querySelectorAll('.menu-item').forEach(function(item) {
-            var checkbox = item.querySelector('input[type="checkbox"]');
-            var quantityInput = item.querySelector('input[type="number"]');
-            if (checkbox.checked) {
-                var itemName = item.querySelector('span').innerText;
-                var quantity = quantityInput.value;
-                if (itemName === 'Boule de glace') {
-                    item.querySelectorAll('input[type="checkbox"]').forEach(function(flavorCheckbox) {
-                        if (flavorCheckbox.checked) {
-                            var flavorName = flavorCheckbox.nextSibling.textContent.trim();
-                            var flavorQuantity = item.querySelector('#' + flavorCheckbox.getAttribute('data-target')).value;
-                            orderSummary.push({ name: itemName + ' - ' + flavorName, quantity: flavorQuantity });
-                        }
-                    });
-                } else {
-                    orderSummary.push({ name: itemName, quantity: quantity });
-                }
-            }
-        });
-
-        var canvas = document.createElement('canvas');
-        var ctx = canvas.getContext('2d');
-        canvas.width = 800;
-        canvas.height = 600;
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = 'black';
-        ctx.font = '20px Arial';
-        ctx.fillText('Liste de la commande :', 20, 40);
-        orderSummary.forEach(function(item, index) {
-            ctx.fillText(item.name + ' - Quantité : ' + item.quantity, 20, 80 + index * 30);
-        });
-
-        var img = canvas.toDataURL('image/png');
-        var link = document.createElement('a');
-        link.href = img;
-        var today = new Date();
-        var date = today.getDate() + '.' + (today.getMonth() + 1) + '.' + today.getFullYear();
-        link.download = 'Liste de la commande du ' + date + '.png';
-        link.click();
-    }
-</script>
-
+<button onclick="generateOrderSummary()" id="orderSummaryBtn" title="Générer une commande">📝</button>
 <button onclick="resetOrder()" id="resetBtn" title="Réinitialiser la commande">🗑️</button>
-
-<script>
-    function resetOrder() {
-        document.querySelectorAll('.menu-item input[type="checkbox"]').forEach(function(checkbox) {
-            checkbox.checked = false;
-        });
-        document.querySelectorAll('.menu-item input[type="number"]').forEach(function(numberInput) {
-            numberInput.value = 0;
-        });
-    }
-</script>
