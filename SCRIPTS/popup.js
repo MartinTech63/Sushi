@@ -1,3 +1,5 @@
+console.log
+
 window.onload = function () {
   const popup = document.getElementById("popupOverlay");
   popup.style.display = "flex";
