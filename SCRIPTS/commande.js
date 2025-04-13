@@ -20,74 +20,96 @@
     });
  
     function generateOrderSummary() {
-        var orderSummary = [];
+        var groupedSummary = {};
+    
         document.querySelectorAll('.menu-item').forEach(function(item) {
             var checkbox = item.querySelector('input[type="checkbox"]');
             var quantityInput = item.querySelector('input[type="number"]');
+    
             if (checkbox.checked) {
                 var itemName = item.querySelector('span').innerText;
                 var quantity = quantityInput.value;
+    
+                var categoryElement = item.closest('.menu-section').querySelector('h2');
+                var category = categoryElement ? categoryElement.innerText : 'Autre';
+    
+                if (!groupedSummary[category]) {
+                    groupedSummary[category] = [];
+                }
+    
                 if (itemName === 'Boule de glace') {
                     item.querySelectorAll('input[type="checkbox"]').forEach(function(flavorCheckbox) {
                         if (flavorCheckbox.checked) {
                             var flavorName = flavorCheckbox.nextSibling.textContent.trim();
                             var flavorQuantity = item.querySelector('#' + flavorCheckbox.getAttribute('data-target')).value;
-                            orderSummary.push({ name: itemName + ' - ' + flavorName, quantity: flavorQuantity });
+                            groupedSummary[category].push({
+                                name: `${itemName} - ${flavorName}`,
+                                quantity: flavorQuantity
+                            });
                         }
                     });
                 } else {
-                    orderSummary.push({ name: itemName, quantity: quantity });
+                    groupedSummary[category].push({
+                        name: itemName,
+                        quantity: quantity
+                    });
                 }
             }
         });
-
+    
+        // Canvas setup
         var canvas = document.createElement('canvas');
         var ctx = canvas.getContext('2d');
-
-        // Augmenter la résolution
-        var scale = 2; // Facteur d'échelle pour augmenter la résolution
-        var itemSpacing = 35;
+    
+        var scale = 2;
+        var itemSpacing = 30;
         var topPadding = 120;
         var footerHeight = 80;
-        var canvasHeight = topPadding + orderSummary.length * itemSpacing + footerHeight;
-
+        var categorySpacing = 30;
+        var totalItems = 0;
+        Object.values(groupedSummary).forEach(list => {
+            totalItems += list.length + 1;
+        });
+        
+        const categoryCount = Object.keys(groupedSummary).length;
+        const safetyMargin = 80; // pour éviter les coupures en bas
+        
+        var canvasHeight = topPadding + (totalItems * itemSpacing) + (categoryCount * 10) + footerHeight + safetyMargin;
+        
+        
+    
         canvas.width = 800 * scale;
         canvas.height = canvasHeight * scale;
-        ctx.scale(scale, scale); // Appliquer l'échelle au contexte
-
+        ctx.scale(scale, scale);
+    
         var today = new Date();
         var day = String(today.getDate()).padStart(2, '0');
         var month = String(today.getMonth() + 1).padStart(2, '0');
         var year = today.getFullYear();
         var date = `${day}.${month}.${year}`;
-
+    
         var logo = new Image();
         logo.src = 'SOURCES/logo.png';
         logo.onload = function () {
-            // Fond principal
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width / scale, canvas.height / scale);
-
-            // Ombre
+    
             ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
             ctx.shadowBlur = 10;
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 4;
-
-            // Boîte blanche
+    
             const boxPadding = 20;
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(boxPadding, boxPadding, (canvas.width / scale) - 2 * boxPadding, (canvas.height / scale) - 2 * boxPadding);
             ctx.shadowBlur = 10;
-
-            // Titre
+    
             const titleText = `🧾 Liste de la commande du ${date}`;
             ctx.fillStyle = '#ff9800';
             ctx.font = 'bold 26px Arial';
             const titleY = boxPadding + 40;
             ctx.fillText(titleText, boxPadding + 20, titleY);
-
-            // Logo à droite du titre
+    
             const logoHeight = 55;
             const aspectRatio = logo.width / logo.height;
             const logoWidth = logoHeight * aspectRatio;
@@ -98,35 +120,54 @@
                 logoWidth,
                 logoHeight
             );
-
-            // Ligne orange
+    
             ctx.strokeStyle = '#ff9800';
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(boxPadding + 20, titleY + 15);
             ctx.lineTo((canvas.width / scale) - boxPadding - 20, titleY + 15);
             ctx.stroke();
-
-            // Contenu
-            ctx.fillStyle = '#555';
-            ctx.font = '18px Arial';
-            orderSummary.forEach(function(item, index) {
-                ctx.fillText(
-                    `• ${item.name} - Quantité : ${item.quantity}`,
-                    boxPadding + 30,
-                    titleY + 50 + index * itemSpacing
-                );
+    
+            let currentY = titleY + 50;
+    
+            Object.keys(groupedSummary).forEach(function(category) {
+                // === TITRE DE CATÉGORIE CENTRÉ + BACKGROUND ===
+                const categoryText = `— ${category.toUpperCase()} —`;
+                ctx.font = 'bold 22px Arial';
+                const textWidth = ctx.measureText(categoryText).width;
+                const centerX = ((canvas.width / scale) - textWidth) / 2;
+    
+                // Fond doux derrière
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(centerX - 10, currentY - 24, textWidth + 20, 32);
+    
+                // Texte orange centré
+                ctx.fillStyle = '#ff9800';
+                ctx.fillText(categoryText, centerX, currentY);
+    
+                currentY += itemSpacing;
+    
+                // === ITEMS DE LA CATÉGORIE ===
+                ctx.fillStyle = '#555';
+                ctx.font = '18px Arial';
+    
+                groupedSummary[category].forEach(function(item) {
+                    ctx.fillText(`• ${item.name} - Quantité : ${item.quantity}`, boxPadding + 50, currentY);
+                    currentY += itemSpacing;
+                });
+    
+                currentY += categorySpacing;
             });
-
-            // Pied de page (dans la boîte blanche)
+    
+            // === FOOTER ===
             ctx.fillStyle = '#888';
             ctx.font = 'italic 18px Arial';
             ctx.textAlign = 'center';
             ctx.fillText("Merci pour votre commande 🍨", (canvas.width / scale) / 2, (canvas.height / scale) - boxPadding - 40);
             ctx.fillText("https://sushi.martintech.fr/", (canvas.width / scale) / 2, (canvas.height / scale) - boxPadding - 20);
             ctx.textAlign = 'start';
-
-            // Téléchargement
+    
+            // Générer image PNG
             var img = canvas.toDataURL('image/png');
             var link = document.createElement('a');
             link.href = img;
@@ -134,3 +175,4 @@
             link.click();
         };
     }
+    
