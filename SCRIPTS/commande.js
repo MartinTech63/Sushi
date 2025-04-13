@@ -1,3 +1,24 @@
+    document.querySelectorAll('.menu-item input[type="checkbox"]').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            var targetId = this.getAttribute('data-target');
+            if (targetId) {
+                    var quantityInput = document.getElementById(targetId);
+                if (this.checked) {
+                     quantityInput.value = 1;
+                } else {
+                    quantityInput.value = 0;
+                }
+                 } else {
+                    var quantityInput = this.nextElementSibling;
+                if (this.checked) {
+                    quantityInput.value = 1;
+                } else {
+                    quantityInput.value = 0;
+                }
+            }
+        });
+    });
+ 
     function generateOrderSummary() {
         var orderSummary = [];
         document.querySelectorAll('.menu-item').forEach(function(item) {
