@@ -23,37 +23,45 @@
         var groupedSummary = {};
     
         document.querySelectorAll('.menu-item').forEach(function(item) {
+            var itemName = item.querySelector('span')?.innerText || '';
+            var categoryElement = item.closest('.menu-section')?.querySelector('h2');
+            var category = categoryElement ? categoryElement.innerText : 'Autre';
+    
+            // Prépare la catégorie si besoin
+            if (!groupedSummary[category]) {
+                groupedSummary[category] = [];
+            }
+    
+            // === Boules de glace : cas spécial ===
+            if (itemName === 'Boule de glace') {
+                item.querySelectorAll('input[type="checkbox"]').forEach(function(flavorCheckbox) {
+                    if (flavorCheckbox.checked) {
+                        var labelText = flavorCheckbox.parentElement.textContent.split(':')[0].trim();
+                        var quantityInput = document.getElementById(flavorCheckbox.dataset.target);
+                        groupedSummary[category].push({
+                            name: `Boule de glace - ${labelText}`,
+                            quantity: quantityInput.value
+                        });
+                    }
+                });
+                return; // on ne traite pas plus loin ce bloc
+            }
+    
+            // === Cas général ===
             var checkbox = item.querySelector('input[type="checkbox"]');
             var quantityInput = item.querySelector('input[type="number"]');
+            if (checkbox && checkbox.checked) {
+                groupedSummary[category].push({
+                    name: itemName,
+                    quantity: quantityInput.value
+                });
+            }
+        });
     
-            if (checkbox.checked) {
-                var itemName = item.querySelector('span').innerText;
-                var quantity = quantityInput.value;
-    
-                var categoryElement = item.closest('.menu-section').querySelector('h2');
-                var category = categoryElement ? categoryElement.innerText : 'Autre';
-    
-                if (!groupedSummary[category]) {
-                    groupedSummary[category] = [];
-                }
-    
-                if (itemName === 'Boule de glace') {
-                    item.querySelectorAll('input[type="checkbox"]').forEach(function(flavorCheckbox) {
-                        if (flavorCheckbox.checked) {
-                            var flavorName = flavorCheckbox.nextSibling.textContent.trim();
-                            var flavorQuantity = item.querySelector('#' + flavorCheckbox.getAttribute('data-target')).value;
-                            groupedSummary[category].push({
-                                name: `${itemName} - ${flavorName}`,
-                                quantity: flavorQuantity
-                            });
-                        }
-                    });
-                } else {
-                    groupedSummary[category].push({
-                        name: itemName,
-                        quantity: quantity
-                    });
-                }
+        // ❌ Supprime les catégories vides
+        Object.keys(groupedSummary).forEach(category => {
+            if (groupedSummary[category].length === 0) {
+                delete groupedSummary[category];
             }
         });
     
