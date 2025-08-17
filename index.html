@@ -1,68 +1,105 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manger des Sushis</title>
-    <link rel="icon" href="SOURCES/logo.png" type="image/png">
-    <link rel="stylesheet" href="styles.css">   
-    <script src="SCRIPTS/clear.js" defer></script>
-    <script src="SCRIPTS/commande.js" defer></script>
-    <script src="SCRIPTS/gototop.js" defer></script>
-    <script src="SCRIPTS/logo.js" defer></script>
-    <script src="SCRIPTS/petales.js" defer></script>
-    <script src="SCRIPTS/popup.js" defer></script>
-    <script src="SCRIPTS/ui.js" defer></script>
-    <script src="SCRIPTS/id.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manger des Sushis</title>
+
+  <!-- Favicon & Styles -->
+  <link rel="icon" href="SOURCES/logo.png" type="image/png" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Scripts (defer = chargés après l'analyse du DOM) -->
+  <script src="SCRIPTS/clear.js" defer></script>
+  <script src="SCRIPTS/commande.js" defer></script>
+  <script src="SCRIPTS/gototop.js" defer></script>
+  <script src="SCRIPTS/logo.js" defer></script>
+  <script src="SCRIPTS/petales.js" defer></script>
+  <script src="SCRIPTS/bat.js" defer></script>
+  <script src="SCRIPTS/popup.js" defer></script>
+  <script src="SCRIPTS/ui.js" defer></script>
+  <script src="SCRIPTS/id.js" defer></script>
 </head>
 
 <body>
-    <header style="top: 0; z-index: 1000;">
-        <img src="SOURCES/logo.png" alt="Logo" style="height: 50px; vertical-align: middle; position: relative; top: -12px;" onclick="playSound()">
-        <h1 style="display: inline; margin-left: 10px;">Manger des Sushis</h1>
-    </header>
-    <audio id="logoSound" src="SOURCES/cartoon_bite_sound_effect.mp3"></audio>
+  <header style="top: 0; z-index: 1000;">
+    <img
+      id="mainLogo"
+      src="SOURCES/logo.png"
+      alt="Logo"
+      style="height: 50px; vertical-align: middle; position: relative; top: -12px;"
+      onclick="playSound()"
+    />
+    <h1 style="display: inline; margin-left: 10px;">Manger des Sushis</h1>
+  </header>
 
-    <nav style="top: 0; display: flex; flex-wrap: wrap; justify-content: center; z-index: 1000;">
-        <a href="#entrees">Entrées</a>
-        <a href="#accompagnement">Accompagnement et Wok</a>
-        <a href="#yakitori">Yakitori</a>
-        <a href="#sushi">Sushi</a>
-        <a href="#temaki">Temaki</a>
-        <a href="#maki_california">Maki & California</a>
-        <a href="#desserts">Desserts</a>
-    </nav>
+  <!-- Gestion du changement de logo selon le thème -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const logoEl = document.getElementById("mainLogo");
+      if (!logoEl) return;
 
-    <div id="popupOverlay" style="display: none;">
-        <div class="popupBox" style="position: relative; padding-bottom: 30px;">
-            <div style="text-align: center;">
-                <img src="SOURCES/logo.png" alt="Logo" style="height: 100px; margin-bottom: 10px;">
-                <h2>Bienvenue sur Manger des Sushis&nbsp;!</h2>
-                <hr style="margin: 10px 0;">
-                <p>
-                    <strong>Manger des Sushis</strong> est un projet visant à faciliter la prise de commande au <strong>Hanami</strong>.<br>
-                    Il inclut une fonctionnalité permettant d'enregistrer sa commande. <br>
-                    Chaque personne peut générer une commande individuelle afin de retrouver facilement ce qu'elle a commandé lors du service.
-                </p>
-                <hr style="margin: 10px 0;">
-                <div id="petalSwitchContainer" class="switch-container" style="margin-top: 20px;">
-                    <span>Activer les pétales 🌸</span>
-                    <label class="switch">
-                        <input type="checkbox" id="petalToggle">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <button onclick="closePopup()" class="popup-btn" style="margin-top: 20px;">Fermer</button>
-            </div>
-            <!-- Version du site en bas à droite -->
-            <p style="position: absolute; bottom: 0px; right: 10px; color: gray; font-size: 12px;">
-                <a href="https://github.com/MartinTech63/Sushi" target="_blank" style="text-decoration: underline; color: gray;">
-                    v12.06.25
-                </a>
-            </p>
-            <!-- Lien pour partager la page en bas à gauche -->
-            <p style="position: absolute; bottom: 0px; left: 10px; color: gray; font-size: 12px;">
-                <a href="#" onclick="
+      function updateLogo() {
+        if (document.body.classList.contains("halloween")) {
+          logoEl.src = "SOURCES/logo_white.png";
+        } else {
+          logoEl.src = "SOURCES/logo.png";
+        }
+      }
+
+      // mise à jour au chargement
+      updateLogo();
+
+      // surveille si la classe du body change (ex: activation/désactivation du thème)
+      const observer = new MutationObserver(updateLogo);
+      observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    });
+  </script>
+
+  <audio id="logoSound" src="SOURCES/cartoon_bite_sound_effect.mp3"></audio>
+
+  <nav style="top: 0; display: flex; flex-wrap: wrap; justify-content: center; z-index: 1000;">
+    <a href="#entrees">Entrées</a>
+    <a href="#accompagnement">Accompagnement et Wok</a>
+    <a href="#yakitori">Yakitori</a>
+    <a href="#sushi">Sushi</a>
+    <a href="#temaki">Temaki</a>
+    <a href="#maki_california">Maki &amp; California</a>
+    <a href="#desserts">Desserts</a>
+  </nav>
+
+  <!-- Popup d'accueil -->
+  <div id="popupOverlay" style="display: none;">
+    <div class="popupBox" style="position: relative; padding-bottom: 30px;">
+      <div style="text-align: center;">
+        <img src="SOURCES/logo.png" alt="Logo" style="height: 100px; margin-bottom: 10px;" />
+        <h2>Bienvenue sur Manger des Sushis&nbsp;!</h2>
+        <hr style="margin: 10px 0;" />
+        <p>
+          <strong>Manger des Sushis</strong> est un projet visant à faciliter la prise de commande au
+          <strong>Hanami</strong>.<br />
+          Il inclut une fonctionnalité permettant d'enregistrer sa commande. <br />
+          Chaque personne peut générer une commande individuelle afin de retrouver facilement ce qu'elle a commandé lors du service.
+        </p>
+        <hr style="margin: 10px 0;" />
+        <div id="petalSwitchContainer" class="switch-container" style="margin-top: 20px;">
+          <span>Activer les pétales 🌸</span>
+          <label class="switch">
+            <input type="checkbox" id="petalToggle" />
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <button onclick="closePopup()" class="popup-btn" style="margin-top: 20px;">Fermer</button>
+      </div>
+      <!-- Version du site en bas à droite -->
+      <p style="position: absolute; bottom: 0px; right: 10px; color: gray; font-size: 12px;">
+        <a href="https://github.com/MartinTech63/Sushi" target="_blank" style="text-decoration: underline; color: gray;">
+          v12.06.25
+        </a>
+      </p>
+      <!-- Lien pour partager la page en bas à gauche -->
+      <p style="position: absolute; bottom: 0px; left: 10px; color: gray; font-size: 12px;">
+        <a href="#" onclick="
                     if (navigator.share) {
                         navigator.share({
                             title: 'Manger des Sushis',
@@ -74,421 +111,417 @@
                     }
                     return false;
                 " style="text-decoration: underline; color: gray;">
-                    🔗 Partager ce site !
-                </a>
-            </p>
-            
-        </div>
+          🔗 Partager ce site !
+        </a>
+      </p>
     </div>
-  
-    <div class="container">
-        <div id="entrees" class="menu-section">
-            <h2>Entrées</h2>
-            <div class="menu-item">
-                <img src="SOURCES/salade_de_choux.jpg" alt="Salade de Choux">
-                <span>01 | Salade de Choux</span>
-                <input type="checkbox" name="salade_choux">
-                <input type="number" name="quantity_salade_choux" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/soupe_miso.jpg" alt="Soupe Miso">
-                <span>02 | Soupe Miso</span>
-                <input type="checkbox" name="soupe_miso">
-                <input type="number" name="quantity_soupe_miso" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/beignet_de_poulet.jpg" alt="Beignet de Poulet">
-                <span>03 | Beignet de Poulet (4 morceaux)</span>
-                <input type="checkbox" name="beignet_poulet">
-                <input type="number" name="quantity_beignet_poulet" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/beignet_de_calamars.jpg" alt="Beignet de Calamars">
-                <span>04 | Beignet de Calamars (4 pièces)</span>
-                <input type="checkbox" name="beignet_calamar">
-                <input type="number" name="quantity_beignet_calamar" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/raviolis_japonais.jpg" alt="Raviolis Japonais">
-                <span>05 | Raviolis Japonais (4 pièces)</span>
-                <input type="checkbox" name="raviolis_japonais">
-                <input type="number" name="quantity_raviolis_japonais" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/tempura_crevettes.jpg" alt="Tempura Crevettes">
-                <span>06 | Tempura Crevettes (3 pièces)</span>
-                <input type="checkbox" name="tempura_crevettes">
-                <input type="number" name="quantity_tempura_crevettes" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/samoussa.jpg" alt="Samoussa">
-                <span>07 | Samoussa (2 pièces)</span>
-                <input type="checkbox" name="samoussa">
-                <input type="number" name="quantity_samoussa" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/nems_au_poulet.jpg" alt="Nêms au Poulet">
-                <span>08 | Nêms au Poulet (3 pièces)</span>
-                <input type="checkbox" name="nems_poulet">
-                <input type="number" name="quantity_nems_poulet" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/raviolis_a_la_crevette.jpg" alt="Raviolis à la Crevette">
-                <span>09 | Raviolis à la Crevette (3 pièces)</span>
-                <input type="checkbox" name="raviolis_crevette">
-                <input type="number" name="quantity_raviolis_crevette" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/bouchee_a_la_crevette.jpg" alt="Bouchée à la Crevette">
-                <span>10 | Bouchée à la Crevette (3 pièces)</span>
-                <input type="checkbox" name="bouchee_crevette">
-                <input type="number" name="quantity_bouchee_crevette" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/rouleaux_au_fromage.jpg" alt="Rouleaux au Fromage">
-                <span>18 | Rouleaux au Fromage (2 pièces)</span>
-                <input type="checkbox" name="rouleaux_fromage">
-                <input type="number" name="quantity_rouleaux_fromage" min="1" max="10" value="0">
-            </div>
-        </div>
+  </div>
+
+  <div class="container">
+    <div id="entrees" class="menu-section">
+      <h2>Entrées</h2>
+      <div class="menu-item">
+        <img src="SOURCES/salade_de_choux.jpg" alt="Salade de Choux" />
+        <span>01 | Salade de Choux</span>
+        <input type="checkbox" name="salade_choux" />
+        <input type="number" name="quantity_salade_choux" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/soupe_miso.jpg" alt="Soupe Miso" />
+        <span>02 | Soupe Miso</span>
+        <input type="checkbox" name="soupe_miso" />
+        <input type="number" name="quantity_soupe_miso" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/beignet_de_poulet.jpg" alt="Beignet de Poulet" />
+        <span>03 | Beignet de Poulet (4 morceaux)</span>
+        <input type="checkbox" name="beignet_poulet" />
+        <input type="number" name="quantity_beignet_poulet" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/beignet_de_calamars.jpg" alt="Beignet de Calamars" />
+        <span>04 | Beignet de Calamars (4 pièces)</span>
+        <input type="checkbox" name="beignet_calamar" />
+        <input type="number" name="quantity_beignet_calamar" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/raviolis_japonais.jpg" alt="Raviolis Japonais" />
+        <span>05 | Raviolis Japonais (4 pièces)</span>
+        <input type="checkbox" name="raviolis_japonais" />
+        <input type="number" name="quantity_raviolis_japonais" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/tempura_crevettes.jpg" alt="Tempura Crevettes" />
+        <span>06 | Tempura Crevettes (3 pièces)</span>
+        <input type="checkbox" name="tempura_crevettes" />
+        <input type="number" name="quantity_tempura_crevettes" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/samoussa.jpg" alt="Samoussa" />
+        <span>07 | Samoussa (2 pièces)</span>
+        <input type="checkbox" name="samoussa" />
+        <input type="number" name="quantity_samoussa" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/nems_au_poulet.jpg" alt="Nêms au Poulet" />
+        <span>08 | Nêms au Poulet (3 pièces)</span>
+        <input type="checkbox" name="nems_poulet" />
+        <input type="number" name="quantity_nems_poulet" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/raviolis_a_la_crevette.jpg" alt="Raviolis à la Crevette" />
+        <span>09 | Raviolis à la Crevette (3 pièces)</span>
+        <input type="checkbox" name="raviolis_crevette" />
+        <input type="number" name="quantity_raviolis_crevette" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/bouchee_a_la_crevette.jpg" alt="Bouchée à la Crevette" />
+        <span>10 | Bouchée à la Crevette (3 pièces)</span>
+        <input type="checkbox" name="bouchee_crevette" />
+        <input type="number" name="quantity_bouchee_crevette" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/rouleaux_au_fromage.jpg" alt="Rouleaux au Fromage" />
+        <span>18 | Rouleaux au Fromage (2 pièces)</span>
+        <input type="checkbox" name="rouleaux_fromage" />
+        <input type="number" name="quantity_rouleaux_fromage" min="1" max="10" value="0" />
+      </div>
     </div>
+  </div>
 
-    <div class="container">
-        <div id="accompagnement" class="menu-section">
-            <h2>Accompagnement et Wok</h2>
-            <div class="menu-item">
-                <img src="SOURCES/nouilles_sautees.jpg" alt="Nouilles sautées">
-                <span>21 | Nouilles sautées</span>
-                <input type="checkbox" name="nouilles_sautees">
-                <input type="number" name="quantity_nouilles_sautees" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/riz_saute_a_la_japonaise.jpg" alt="Riz sautées à la japonaise">
-                <span>22 | Riz sautées à la japonaise</span>
-                <input type="checkbox" name="riz_saute_a_la_japonaise">
-                <input type="number" name="quantity_riz_saute_a_la_japonaise" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/riz_nature.jpg" alt="Riz nature">
-                <span>23 | Riz nature</span>
-                <input type="checkbox" name="riz_nature">
-                <input type="number" name="quantity_riz_nature" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/boeuf_aux_oignons.jpg" alt="Boeuf aux oignons">
-                <span>24 | Boeuf aux oignons</span>
-                <input type="checkbox" name="boeuf_aux_oignons">
-                <input type="number" name="quantity_boeuf_aux_oignons" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/crevettes_au_sel_et_poivre.jpg" alt="Crevettes au sel et poivre">
-                <span>25 | Crevettes au sel et poivre</span>
-                <input type="checkbox" name="crevettes_au_sel_et_poivre">
-                <input type="number" name="quantity_crevettes_au_sel_et_poivre" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/legumes_sautes.jpg" alt="Légumes sautés">
-                <span>26 | Légumes sautés</span>
-                <input type="checkbox" name="legumes_sautes">
-                <input type="number" name="quantity_legumes_sautes" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/poisson_aux_5_parfums.jpg" alt="Poisson aux 5 parfums">
-                <span>27 | Poisson aux 5 parfums</span>
-                <input type="checkbox" name="poisson_aux_5_parfums">
-                <input type="number" name="quantity_poisson_aux_5_parfums" min="1" max="10" value="0">
-            </div>
-        </div>
-
-        <div id="yakitori" class="menu-section">
-            <h2>Yakitori</h2>
-            <div class="menu-item">
-                <img src="SOURCES/poulet.jpg" alt="Poulet">
-                <span>11 | Poulet (2 pièces)</span>
-                <input type="checkbox" name="poulet">
-                <input type="number" name="quantity_poulet" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/aile_de_poulet.jpg" alt="Aile de poulet">
-                <span>12 | Aile de poulet (2 pièces)</span>
-                <input type="checkbox" name="aile_de_poulet">
-                <input type="number" name="quantity_aile_de_poulet" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/boulette_de_poulet.jpg" alt="Boulette de poulet">
-                <span>13 | Boulette de poulet (2 pièces)</span>
-                <input type="checkbox" name="boulette_de_poulet">
-                <input type="number" name="quantity_boulette_de_poulet" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/champignon.jpg" alt="Champignon">
-                <span>14 | Champignon (2 pièces)</span>
-                <input type="checkbox" name="champignon">
-                <input type="number" name="quantity_champignon" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/boeuf.jpg" alt="Boeuf">
-                <span>15 | Boeuf (2 pièces)</span>
-                <input type="checkbox" name="boeuf">
-                <input type="number" name="quantity_boeuf" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/boeuf_au_fromage.jpg" alt="Boeuf au fromage">
-                <span>16 | Boeuf au fromage (2 pièces)</span>
-                <input type="checkbox" name="boeuf_au_fromage">
-                <input type="number" name="quantity_boeuf_au_fromage" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/courgette.jpg" alt="Courgette">
-                <span>17 | Courgette (2 pièces)</span>
-                <input type="checkbox" name="courgette">
-                <input type="number" name="quantity_courgette" min="1" max="10" value="0">
-            </div>
-        </div>
-
-        <div id="sushi" class="menu-section">
-            <h2>Sushi</h2>
-            <div class="menu-item">
-                <img src="SOURCES/concombre.jpg" alt="Concombre">
-                <span>30 | Concombre (2 pièces)</span>
-                <input type="checkbox" name="concombre">
-                <input type="number" name="quantity_concombre" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/saumon.jpg" alt="Saumon">
-                <span>31 | Saumon (2 pièces)</span>
-                <input type="checkbox" name="saumon">
-                <input type="number" name="quantity_saumon" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/thon.jpg" alt="Thon">
-                <span>32 | Thon (2 pièces)</span>
-                <input type="checkbox" name="thon">
-                <input type="number" name="quantity_thon" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/daurade.jpg" alt="Daurade">
-                <span>33 | Daurade (2 pièces)</span>
-                <input type="checkbox" name="daurade">
-                <input type="number" name="quantity_daurade" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/crevette.jpg" alt="Crevette">
-                <span>34 | Crevette (2 pièces)</span>
-                <input type="checkbox" name="crevette">
-                <input type="number" name="quantity_crevette" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/maquereau.jpg" alt="Maquereau">
-                <span>35 | Maquereau (2 pièces)</span>
-                <input type="checkbox" name="maquereau">
-                <input type="number" name="quantity_maquereau" min="1" max="10" value="0">
-            </div>
-        </div>
-
-        <div id="temaki" class="menu-section">
-            <h2>Temaki</h2>
-            <div class="menu-item">
-                <img src="SOURCES/saumon_avocat.jpg" alt="Saumon Avocat">
-                <span>36 | Saumon Avocat (1 pièce)</span>
-                <input type="checkbox" name="saumon_avocat">
-                <input type="number" name="quantity_saumon_avocat" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/thon_avocat.jpg" alt="Thon Avocat">
-                <span>37 | Thon Avocat (1 pièce)</span>
-                <input type="checkbox" name="thon_avocat">
-                <input type="number" name="quantity_thon_avocat" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/surimi_avocat.jpg" alt="Surimi Avocat">
-                <span>38 | Surimi Avocat (1 pièce)</span>
-                <input type="checkbox" name="surimi_avocat">
-                <input type="number" name="quantity_surimi_avocat" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/concombre_avocat.jpg" alt="Concombre Avocat">
-                <span>39 | Concombre Avocat (1 pièce)</span>
-                <input type="checkbox" name="concombre_avocat">
-                <input type="number" name="quantity_concombre_avocat" min="1" max="10" value="0">
-            </div>
-        </div>
-
-        <div id="maki_california" class="menu-section">
-            <h2>Maki & California</h2>
-            <div class="menu-item">
-                <img src="SOURCES/maki_saumon.jpg" alt="Maki Saumon">
-                <span>41 | Maki Saumon (4 pièces)</span>
-                <input type="checkbox" name="maki_saumon">
-                <input type="number" name="quantity_maki_saumon" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/maki_thon.jpg" alt="Maki Thon">
-                <span>42 | Maki Thon (4 pièces)</span>
-                <input type="checkbox" name="maki_thon">
-                <input type="number" name="quantity_maki_thon" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/maki_avocat.jpg" alt="Maki Avocat">
-                <span>43 | Maki Avocat (4 pièces)</span>
-                <input type="checkbox" name="maki_avocat">
-                <input type="number" name="quantity_maki_avocat" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/maki_radis_sale.jpg" alt="Maki Radis Salé">
-                <span>44 | Maki Radis Salé (4 pièces)</span>
-                <input type="checkbox" name="maki_radis_sale">
-                <input type="number" name="quantity_maki_radis_sale" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/maki_concombre.jpg" alt="Maki Concombre">
-                <span>45 | Maki Concombre (4 pièces)</span>
-                <input type="checkbox" name="maki_concombre">
-                <input type="number" name="quantity_maki_concombre" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/maki_crevette.jpg" alt="Maki Crevette">
-                <span>46 | Maki Crevette (4 pièces)</span>
-                <input type="checkbox" name="maki_crevette">
-                <input type="number" name="quantity_maki_crevette" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/maki_fromage_fondu.jpg" alt="Maki Fromage Fondu">
-                <span>47 | Maki Fromage Fondu (4 pièces)</span>
-                <input type="checkbox" name="maki_fromage_fondu">
-                <input type="number" name="quantity_maki_fromage_fondu" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/california_saumon_avocat.jpg" alt="California Saumon Avocat">
-                <span>51 | California Saumon Avocat (4 pièces)</span>
-                <input type="checkbox" name="california_saumon_avocat">
-                <input type="number" name="quantity_california_saumon_avocat" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/california_thon_cuit_mayonnaise_avocat.jpg" alt="California Thon Cuit Mayonnaise Avocat">
-                <span>52 | California Thon Cuit Mayonnaise Avocat (4 pièces)</span>
-                <input type="checkbox" name="california_thon_mayo_avocat">
-                <input type="number" name="quantity_california_thon_mayo_avocat" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/california_surimi_avocat.jpg" alt="California Surimi Avocat">
-                <span>53 | California Surimi Avocat (4 pièces)</span>
-                <input type="checkbox" name="california_surimi_avocat">
-                <input type="number" name="quantity_california_surimi_avocat" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/california_crevette_avocat.jpg" alt="California Crevette Avocat">
-                <span>54 | California Crevette Avocat (4 pièces)</span>
-                <input type="checkbox" name="california_crevette_avocat">
-                <input type="number" name="quantity_california_crevette_avocat" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/california_saumon_avocat_fromage.jpg" alt="California Saumon Avocat Fromage">
-                <span>55 | California Saumon Avocat Fromage (4 pièces)</span>
-                <input type="checkbox" name="california_saumon_avocat_fromage">
-                <input type="number" name="quantity_california_saumon_avocat_fromage" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/california_saumon_avocat_crispy.jpg" alt="California Saumon Avocat Crispy">
-                <span>56 | California Saumon Avocat Crispy (4 pièces)</span>
-                <input type="checkbox" name="california_saumon_avocat_crispy">
-                <input type="number" name="quantity_california_saumon_avocat_crispy" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/california_surimi_avocat_frit.jpg" alt="California Surimi Avocat Frit">
-                <span>57 | California Surimi Avocat Frit (4 pièces)</span>
-                <input type="checkbox" name="california_surimi_frit">
-                <input type="number" name="quantity_california_surimi_frit" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/california_fromage_avocat.jpg" alt="California Fromage Avocat">
-                <span>59 | California Fromage Avocat (4 pièces)</span>
-                <input type="checkbox" name="california_fromage_avocat">
-                <input type="number" name="quantity_california_fromage_avocat" min="1" max="10" value="0">
-            </div>            
-        </div>
-
-        <div id="desserts" class="menu-section">
-            <h2>Desserts</h2>
-            <div class="menu-item">
-                <img src="SOURCES/lychee.jpg" alt="Lychee">
-                <span>Lychee</span>
-                <input type="checkbox" name="lychee">
-                <input type="number" name="quantity_lychee" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/nougat.jpg" alt="Nougat">
-                <span>Nougat</span>
-                <input type="checkbox" name="nougat">
-                <input type="number" name="quantity_nougat" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/perle_coco.jpg" alt="Perle coco">
-                <span>Perle de coco au beurre de cacahuète (1 pièce)</span>
-                <input type="checkbox" name="perle_coco">
-                <input type="number" name="quantity_perle_coco" min="1" max="10" value="0">
-            </div>
-            <div class="menu-item">
-                <img src="SOURCES/mochi_glace.jpg" alt="Mochi glacé">
-                <span>Mochi glacé (2 pièces)<span style="color: red;">(+ 3,50€)</span></span>
-                <input type="checkbox" name="mochi_glace">
-                <input type="number" name="quantity_mochi_glace" min="1" max="10" value="0">
-            </div>
-
-            <div class="menu-item">
-                <img src="SOURCES/boule_glace.jpg" alt="Boule de glace">
-                <span>Boule de glace</span>
-                <div>
-                    <label>
-                        <input type="checkbox" name="boule_glace_chocolat" data-target="quantity_boule_glace_chocolat">
-                        Chocolat :
-                    </label>
-                    <input type="number" id="quantity_boule_glace_chocolat" name="quantity_boule_glace_chocolat" min="1" max="10" value="0">
-                </div>
-                <div>
-                    <label>
-                        <input type="checkbox" name="boule_glace_vanille" data-target="quantity_boule_glace_vanille">
-                        Vanille :
-                    </label>
-                    <input type="number" id="quantity_boule_glace_vanille" name="quantity_boule_glace_vanille" min="1" max="10" value="0">
-                </div>
-                <div>
-                    <label>
-                        <input type="checkbox" name="boule_glace_fraise" data-target="quantity_boule_glace_fraise">
-                        Fraise :
-                    </label>
-                    <input type="number" id="quantity_boule_glace_fraise" name="quantity_boule_glace_fraise" min="1" max="10" value="0">
-                </div>
-                <div>
-                    <label>
-                        <input type="checkbox" name="boule_glace_citron" data-target="quantity_boule_glace_citron">
-                        Citron :
-                    </label>
-                    <input type="number" id="quantity_boule_glace_citron" name="quantity_boule_glace_citron" min="1" max="10" value="0">
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    <div id="accompagnement" class="menu-section">
+      <h2>Accompagnement et Wok</h2>
+      <div class="menu-item">
+        <img src="SOURCES/nouilles_sautees.jpg" alt="Nouilles sautées" />
+        <span>21 | Nouilles sautées</span>
+        <input type="checkbox" name="nouilles_sautees" />
+        <input type="number" name="quantity_nouilles_sautees" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/riz_saute_a_la_japonaise.jpg" alt="Riz sautées à la japonaise" />
+        <span>22 | Riz sautées à la japonaise</span>
+        <input type="checkbox" name="riz_saute_a_la_japonaise" />
+        <input type="number" name="quantity_riz_saute_a_la_japonaise" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/riz_nature.jpg" alt="Riz nature" />
+        <span>23 | Riz nature</span>
+        <input type="checkbox" name="riz_nature" />
+        <input type="number" name="quantity_riz_nature" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/boeuf_aux_oignons.jpg" alt="Boeuf aux oignons" />
+        <span>24 | Boeuf aux oignons</span>
+        <input type="checkbox" name="boeuf_aux_oignons" />
+        <input type="number" name="quantity_boeuf_aux_oignons" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/crevettes_au_sel_et_poivre.jpg" alt="Crevettes au sel et poivre" />
+        <span>25 | Crevettes au sel et poivre</span>
+        <input type="checkbox" name="crevettes_au_sel_et_poivre" />
+        <input type="number" name="quantity_crevettes_au_sel_et_poivre" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/legumes_sautes.jpg" alt="Légumes sautés" />
+        <span>26 | Légumes sautés</span>
+        <input type="checkbox" name="legumes_sautes" />
+        <input type="number" name="quantity_legumes_sautes" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/poisson_aux_5_parfums.jpg" alt="Poisson aux 5 parfums" />
+        <span>27 | Poisson aux 5 parfums</span>
+        <input type="checkbox" name="poisson_aux_5_parfums" />
+        <input type="number" name="quantity_poisson_aux_5_parfums" min="1" max="10" value="0" />
+      </div>
     </div>
 
-    <footer style="width: 100; background-color: #ff9800; padding: 20px; text-align: center; margin-top: 20px; border-top: 2px solid #333; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); color: white;">
-        <h2 style="margin: 0; font-size: 1rem;">Fait avec le ❤️ - Martin Tech 2025</h2>
-        <h3 style="margin: 0; font-size: 0.8rem;">
-            <a href="https://github.com/MartinTech63/Sushi" target="_blank" style="color: white; text-decoration: none; text-decoration: underline;">Version : v12.06.25</a>
-        </h3></h3>
-    </footer>
+    <div id="yakitori" class="menu-section">
+      <h2>Yakitori</h2>
+      <div class="menu-item">
+        <img src="SOURCES/poulet.jpg" alt="Poulet" />
+        <span>11 | Poulet (2 pièces)</span>
+        <input type="checkbox" name="poulet" />
+        <input type="number" name="quantity_poulet" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/aile_de_poulet.jpg" alt="Aile de poulet" />
+        <span>12 | Aile de poulet (2 pièces)</span>
+        <input type="checkbox" name="aile_de_poulet" />
+        <input type="number" name="quantity_aile_de_poulet" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/boulette_de_poulet.jpg" alt="Boulette de poulet" />
+        <span>13 | Boulette de poulet (2 pièces)</span>
+        <input type="checkbox" name="boulette_de_poulet" />
+        <input type="number" name="quantity_boulette_de_poulet" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/champignon.jpg" alt="Champignon" />
+        <span>14 | Champignon (2 pièces)</span>
+        <input type="checkbox" name="champignon" />
+        <input type="number" name="quantity_champignon" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/boeuf.jpg" alt="Boeuf" />
+        <span>15 | Boeuf (2 pièces)</span>
+        <input type="checkbox" name="boeuf" />
+        <input type="number" name="quantity_boeuf" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/boeuf_au_fromage.jpg" alt="Boeuf au fromage" />
+        <span>16 | Boeuf au fromage (2 pièces)</span>
+        <input type="checkbox" name="boeuf_au_fromage" />
+        <input type="number" name="quantity_boeuf_au_fromage" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/courgette.jpg" alt="Courgette" />
+        <span>17 | Courgette (2 pièces)</span>
+        <input type="checkbox" name="courgette" />
+        <input type="number" name="quantity_courgette" min="1" max="10" value="0" />
+      </div>
+    </div>
 
+    <div id="sushi" class="menu-section">
+      <h2>Sushi</h2>
+      <div class="menu-item">
+        <img src="SOURCES/concombre.jpg" alt="Concombre" />
+        <span>30 | Concombre (2 pièces)</span>
+        <input type="checkbox" name="concombre" />
+        <input type="number" name="quantity_concombre" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/saumon.jpg" alt="Saumon" />
+        <span>31 | Saumon (2 pièces)</span>
+        <input type="checkbox" name="saumon" />
+        <input type="number" name="quantity_saumon" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/thon.jpg" alt="Thon" />
+        <span>32 | Thon (2 pièces)</span>
+        <input type="checkbox" name="thon" />
+        <input type="number" name="quantity_thon" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/daurade.jpg" alt="Daurade" />
+        <span>33 | Daurade (2 pièces)</span>
+        <input type="checkbox" name="daurade" />
+        <input type="number" name="quantity_daurade" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/crevette.jpg" alt="Crevette" />
+        <span>34 | Crevette (2 pièces)</span>
+        <input type="checkbox" name="crevette" />
+        <input type="number" name="quantity_crevette" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/maquereau.jpg" alt="Maquereau" />
+        <span>35 | Maquereau (2 pièces)</span>
+        <input type="checkbox" name="maquereau" />
+        <input type="number" name="quantity_maquereau" min="1" max="10" value="0" />
+      </div>
+    </div>
+
+    <div id="temaki" class="menu-section">
+      <h2>Temaki</h2>
+      <div class="menu-item">
+        <img src="SOURCES/saumon_avocat.jpg" alt="Saumon Avocat" />
+        <span>36 | Saumon Avocat (1 pièce)</span>
+        <input type="checkbox" name="saumon_avocat" />
+        <input type="number" name="quantity_saumon_avocat" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/thon_avocat.jpg" alt="Thon Avocat" />
+        <span>37 | Thon Avocat (1 pièce)</span>
+        <input type="checkbox" name="thon_avocat" />
+        <input type="number" name="quantity_thon_avocat" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/surimi_avocat.jpg" alt="Surimi Avocat" />
+        <span>38 | Surimi Avocat (1 pièce)</span>
+        <input type="checkbox" name="surimi_avocat" />
+        <input type="number" name="quantity_surimi_avocat" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/concombre_avocat.jpg" alt="Concombre Avocat" />
+        <span>39 | Concombre Avocat (1 pièce)</span>
+        <input type="checkbox" name="concombre_avocat" />
+        <input type="number" name="quantity_concombre_avocat" min="1" max="10" value="0" />
+      </div>
+    </div>
+
+    <div id="maki_california" class="menu-section">
+      <h2>Maki &amp; California</h2>
+      <div class="menu-item">
+        <img src="SOURCES/maki_saumon.jpg" alt="Maki Saumon" />
+        <span>41 | Maki Saumon (4 pièces)</span>
+        <input type="checkbox" name="maki_saumon" />
+        <input type="number" name="quantity_maki_saumon" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/maki_thon.jpg" alt="Maki Thon" />
+        <span>42 | Maki Thon (4 pièces)</span>
+        <input type="checkbox" name="maki_thon" />
+        <input type="number" name="quantity_maki_thon" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/maki_avocat.jpg" alt="Maki Avocat" />
+        <span>43 | Maki Avocat (4 pièces)</span>
+        <input type="checkbox" name="maki_avocat" />
+        <input type="number" name="quantity_maki_avocat" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/maki_radis_sale.jpg" alt="Maki Radis Salé" />
+        <span>44 | Maki Radis Salé (4 pièces)</span>
+        <input type="checkbox" name="maki_radis_sale" />
+        <input type="number" name="quantity_maki_radis_sale" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/maki_concombre.jpg" alt="Maki Concombre" />
+        <span>45 | Maki Concombre (4 pièces)</span>
+        <input type="checkbox" name="maki_concombre" />
+        <input type="number" name="quantity_maki_concombre" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/maki_crevette.jpg" alt="Maki Crevette" />
+        <span>46 | Maki Crevette (4 pièces)</span>
+        <input type="checkbox" name="maki_crevette" />
+        <input type="number" name="quantity_maki_crevette" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/maki_fromage_fondu.jpg" alt="Maki Fromage Fondu" />
+        <span>47 | Maki Fromage Fondu (4 pièces)</span>
+        <input type="checkbox" name="maki_fromage_fondu" />
+        <input type="number" name="quantity_maki_fromage_fondu" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/california_saumon_avocat.jpg" alt="California Saumon Avocat" />
+        <span>51 | California Saumon Avocat (4 pièces)</span>
+        <input type="checkbox" name="california_saumon_avocat" />
+        <input type="number" name="quantity_california_saumon_avocat" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/california_thon_cuit_mayonnaise_avocat.jpg" alt="California Thon Cuit Mayonnaise Avocat" />
+        <span>52 | California Thon Cuit Mayonnaise Avocat (4 pièces)</span>
+        <input type="checkbox" name="california_thon_mayo_avocat" />
+        <input type="number" name="quantity_california_thon_mayo_avocat" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/california_surimi_avocat.jpg" alt="California Surimi Avocat" />
+        <span>53 | California Surimi Avocat (4 pièces)</span>
+        <input type="checkbox" name="california_surimi_avocat" />
+        <input type="number" name="quantity_california_surimi_avocat" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/california_crevette_avocat.jpg" alt="California Crevette Avocat" />
+        <span>54 | California Crevette Avocat (4 pièces)</span>
+        <input type="checkbox" name="california_crevette_avocat" />
+        <input type="number" name="quantity_california_crevette_avocat" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/california_saumon_avocat_fromage.jpg" alt="California Saumon Avocat Fromage" />
+        <span>55 | California Saumon Avocat Fromage (4 pièces)</span>
+        <input type="checkbox" name="california_saumon_avocat_fromage" />
+        <input type="number" name="quantity_california_saumon_avocat_fromage" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/california_saumon_avocat_crispy.jpg" alt="California Saumon Avocat Crispy" />
+        <span>56 | California Saumon Avocat Crispy (4 pièces)</span>
+        <input type="checkbox" name="california_saumon_avocat_crispy" />
+        <input type="number" name="quantity_california_saumon_avocat_crispy" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/california_surimi_avocat_frit.jpg" alt="California Surimi Avocat Frit" />
+        <span>57 | California Surimi Avocat Frit (4 pièces)</span>
+        <input type="checkbox" name="california_surimi_frit" />
+        <input type="number" name="quantity_california_surimi_frit" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/california_fromage_avocat.jpg" alt="California Fromage Avocat" />
+        <span>59 | California Fromage Avocat (4 pièces)</span>
+        <input type="checkbox" name="california_fromage_avocat" />
+        <input type="number" name="quantity_california_fromage_avocat" min="1" max="10" value="0" />
+      </div>
+    </div>
+
+    <div id="desserts" class="menu-section">
+      <h2>Desserts</h2>
+      <div class="menu-item">
+        <img src="SOURCES/lychee.jpg" alt="Lychee" />
+        <span>Lychee</span>
+        <input type="checkbox" name="lychee" />
+        <input type="number" name="quantity_lychee" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/nougat.jpg" alt="Nougat" />
+        <span>Nougat</span>
+        <input type="checkbox" name="nougat" />
+        <input type="number" name="quantity_nougat" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/perle_coco.jpg" alt="Perle coco" />
+        <span>Perle de coco au beurre de cacahuète (1 pièce)</span>
+        <input type="checkbox" name="perle_coco" />
+        <input type="number" name="quantity_perle_coco" min="1" max="10" value="0" />
+      </div>
+      <div class="menu-item">
+        <img src="SOURCES/mochi_glace.jpg" alt="Mochi glacé" />
+        <span>
+          Mochi glacé (2 pièces)
+          <span style="color: red;">(+ 3,50€)</span>
+        </span>
+        <input type="checkbox" name="mochi_glace" />
+        <input type="number" name="quantity_mochi_glace" min="1" max="10" value="0" />
+      </div>
+
+      <div class="menu-item">
+        <img src="SOURCES/boule_glace.jpg" alt="Boule de glace" />
+        <span>Boule de glace</span>
+        <div>
+          <label>
+            <input type="checkbox" name="boule_glace_chocolat" data-target="quantity_boule_glace_chocolat" />
+            Chocolat :
+          </label>
+          <input type="number" id="quantity_boule_glace_chocolat" name="quantity_boule_glace_chocolat" min="1" max="10" value="0" />
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" name="boule_glace_vanille" data-target="quantity_boule_glace_vanille" />
+            Vanille :
+          </label>
+          <input type="number" id="quantity_boule_glace_vanille" name="quantity_boule_glace_vanille" min="1" max="10" value="0" />
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" name="boule_glace_fraise" data-target="quantity_boule_glace_fraise" />
+            Fraise :
+          </label>
+          <input type="number" id="quantity_boule_glace_fraise" name="quantity_boule_glace_fraise" min="1" max="10" value="0" />
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" name="boule_glace_citron" data-target="quantity_boule_glace_citron" />
+            Citron :
+          </label>
+          <input type="number" id="quantity_boule_glace_citron" name="quantity_boule_glace_citron" min="1" max="10" value="0" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canvas pour les pétales : un seul élément et à l'intérieur du <body> -->
+  <canvas id="petalsCanvas" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 0;"></canvas>
+
+  <!-- Boutons d'action (doivent être dans le body) -->
+  <button onclick="topFunction()" id="topBtn" title="Retour en haut">⬆️</button>
+  <button onclick="generateOrderSummary()" id="orderSummaryBtn" title="Générer une commande">📝</button>
+  <button onclick="resetOrder()" id="resetBtn" title="Réinitialiser la commande">🗑️</button>
+
+  <footer style="width: 100%; background-color: #ff9800; padding: 20px; text-align: center; margin-top: 20px; border-top: 2px solid #333; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); color: white;">
+    <h2 style="margin: 0; font-size: 1rem;">Fait avec le ❤️ - Martin Tech 2025</h2>
+    <h3 style="margin: 0; font-size: 0.8rem;">
+      <a href="https://github.com/MartinTech63/Sushi" target="_blank" style="color: white; text-decoration: underline;">Version : v12.06.25</a>
+    </h3>
+  </footer>
 </body>
-
-<canvas id="petalsCanvas" style="position: fixed; top: 0; left: 0; pointer-events: none;"></canvas>
-
-<canvas id="petalsCanvas" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 0;"></canvas>
-
-<canvas id="petalsCanvas" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 0;"></canvas>
-
-<canvas id="petalsCanvas" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 0;"></canvas>
-
 </html>
-
-<button onclick="topFunction()" id="topBtn" title="Retour en haut">⬆️</button>
-<button onclick="generateOrderSummary()" id="orderSummaryBtn" title="Générer une commande">📝</button>
-<button onclick="resetOrder()" id="resetBtn" title="Réinitialiser la commande">🗑️</button>

@@ -334,3 +334,103 @@ input:checked + .slider {
 input:checked + .slider:before {
     transform: translateX(24px); /* Déplacement du cercle */
 }
+/* =====================
+   🎃 Thème Halloween (fond noir, sans assets)
+   ===================== */
+body.halloween {
+  background-color: #000; /* Fond noir */
+  color: #f4f0e6;
+}
+
+/* Header */
+body.halloween header {
+  background-color: #1a1a1a;
+  border-bottom: 3px solid #ff6600;
+  color: #ff9f1c;
+  text-shadow: 0 0 8px rgba(255,100,0,0.5);
+}
+
+/* Navigation */
+body.halloween nav {
+  background-color: #111;
+}
+body.halloween nav a {
+  color: #eee;
+}
+body.halloween nav a:hover {
+  background-color: #222;
+  color: #ff6600;
+}
+
+/* Sections */
+body.halloween .menu-section {
+  background: #141414;
+  box-shadow: 0 4px 12px rgba(0,0,0,.7);
+  border: 1px solid #333;
+}
+body.halloween .menu-section h2 {
+  color: #ff9f1c;
+  border-bottom: 2px solid #ff6600;
+  text-shadow: 0 0 6px rgba(255,120,0,0.4);
+}
+
+/* Items */
+body.halloween .menu-item {
+  background: #1b1b1b;
+  border: 1px solid #333;
+  color: #f0e0d6;
+}
+body.halloween .menu-item span {
+  color: #ffd8a8;
+}
+
+/* Inputs */
+body.halloween input[type="number"] {
+  background: #000;
+  color: #fff;
+  border: 1px solid #555;
+}
+body.halloween input[type="number"]:focus {
+  border-color: #ff6600;
+  outline: none;
+  box-shadow: 0 0 4px #ff6600;
+}
+
+/* Boutons */
+body.halloween #topBtn,
+body.halloween #orderSummaryBtn,
+body.halloween #resetBtn,
+body.halloween .popup-btn {
+  background-color: #ff6600;
+  border: 2px solid #3a1a0f;
+  color: #fff;
+}
+body.halloween #topBtn:hover,
+body.halloween #orderSummaryBtn:hover,
+body.halloween #resetBtn:hover,
+body.halloween .popup-btn:hover {
+  background-color: #7b2c1f;
+}
+
+/* Footer */
+body.halloween footer {
+  background-color: #000 !important;   /* fond noir */
+  color: #eee !important;              /* texte clair */
+  border-top: 2px solid #ff6600 !important;
+  box-shadow: none !important;
+  width: 100% !important;              /* corrige width inline */
+}
+
+body.halloween footer h2,
+body.halloween footer h3 {
+  color: #eee !important;
+}
+
+body.halloween footer a {
+  color: #ff9f1c !important;           /* liens orange */
+  text-decoration: underline !important;
+}
+
+body.halloween footer a:hover {
+  color: #ffd8a8 !important;           /* hover plus clair */
+}
