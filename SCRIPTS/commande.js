@@ -1,7 +1,8 @@
 
-/*! commande.js — sync minimal (aucune modif d'export)
+/*! commande.js — sync + auto-add (aucune modif d'export)
  *  - Coche -> quantité = 1 (si 0/vide). Décoche -> 0
  *  - Saisie quantité > 0 -> coche la case, 0 -> décoche
+ *  - DISPATCH 'change' sur la checkbox si son état change (met à jour le bouton "Ajouter/Ajouté")
  *  - Gère data-target (Boule de glace) et cas général
  *  - Ne touche PAS à generateOrderSummary()
  */
@@ -68,7 +69,12 @@
       let v = parseInt(qty.value, 10);
       if (isNaN(v) || v < 0) v = 0;
       qty.value = v;
+      const prev = cb.checked;
       cb.checked = v > 0;
+      if (cb.checked !== prev) {
+        // Notifie le reste de l'UI (ex: bouton "Ajouter/Ajouté")
+        cb.dispatchEvent(new Event('change', { bubbles: true }));
+      }
     };
 
     qty.addEventListener('input', sync);
@@ -79,11 +85,12 @@
     document.querySelectorAll('.menu-item input[type="checkbox"]').forEach(linkCheckbox);
     document.querySelectorAll('.menu-item input[type="number"]').forEach(linkNumber);
 
-    // Synchronisation initiale (ne modifie pas les cases déjà cochées)
+    // Synchronisation initiale (met à jour la case et notifie si nécessaire)
     document.querySelectorAll('.menu-item input[type="number"]').forEach(qty => {
       let v = parseInt(qty.value, 10);
       if (isNaN(v) || v < 0) v = 0;
       qty.value = v;
+
       // Met à jour la case si l'utilisateur a rechargé avec des valeurs
       const id = qty.id;
       let cb = null;
@@ -92,7 +99,13 @@
         const item = qty.closest('.menu-item');
         if (item) cb = item.querySelector('input[type="checkbox"]');
       }
-      if (cb) cb.checked = v > 0;
+      if (cb) {
+        const prev = cb.checked;
+        cb.checked = v > 0;
+        if (cb.checked !== prev) {
+          cb.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
     });
   });
 })();

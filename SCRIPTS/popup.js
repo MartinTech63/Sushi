@@ -21,3 +21,15 @@ function closePopup() {
     popup.style.display = "none";
   }, 500);
 }
+// Prevent scrolling when popup is open
+document.addEventListener('touchmove', function (e) {
+  if (document.body.classList.contains('noscroll')) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+document.addEventListener('wheel', function (e) {
+  if (document.body.classList.contains('noscroll')) {
+    e.preventDefault();
+  }
+}, { passive: false });
