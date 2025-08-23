@@ -1,3 +1,104 @@
+
+/*! commande.js — sync minimal (aucune modif d'export)
+ *  - Coche -> quantité = 1 (si 0/vide). Décoche -> 0
+ *  - Saisie quantité > 0 -> coche la case, 0 -> décoche
+ *  - Gère data-target (Boule de glace) et cas général
+ *  - Ne touche PAS à generateOrderSummary()
+ */
+(function () {
+  'use strict';
+
+  function linkCheckbox(cb) {
+    // Cas explicite: data-target pointe vers l'input number
+    const targetId = cb.getAttribute('data-target');
+    if (targetId) {
+      const qty = document.getElementById(targetId);
+      if (qty && qty.type === 'number') {
+        if (!qty.hasAttribute('min') || parseInt(qty.getAttribute('min'),10) > 0) {
+          qty.setAttribute('min', '0'); // autorise redescendre à 0
+        }
+        cb.addEventListener('change', () => {
+          if (cb.checked) {
+            const v = parseInt(qty.value, 10);
+            if (!v || v < 1) qty.value = 1;
+          } else {
+            qty.value = 0;
+          }
+        });
+      }
+      return;
+    }
+
+    // Cas général: même .menu-item
+    const item = cb.closest('.menu-item');
+    if (!item) return;
+    const qty = item.querySelector('input[type="number"]');
+    if (!qty) return;
+    if (!qty.hasAttribute('min') || parseInt(qty.getAttribute('min'),10) > 0) {
+      qty.setAttribute('min', '0');
+    }
+    cb.addEventListener('change', () => {
+      if (cb.checked) {
+        const v = parseInt(qty.value, 10);
+        if (!v || v < 1) qty.value = 1;
+      } else {
+        qty.value = 0;
+      }
+    });
+  }
+
+  function linkNumber(qty) {
+    if (!qty.hasAttribute('min') || parseInt(qty.getAttribute('min'),10) > 0) {
+      qty.setAttribute('min', '0'); // autorise 0
+    }
+
+    // Trouver la checkbox associée
+    let cb = null;
+    const id = qty.id;
+    if (id) {
+      cb = document.querySelector(`input[type="checkbox"][data-target="${CSS.escape(id)}"]`);
+    }
+    if (!cb) {
+      const item = qty.closest('.menu-item');
+      if (item) cb = item.querySelector('input[type="checkbox"]');
+    }
+    if (!cb) return;
+
+    const sync = () => {
+      let v = parseInt(qty.value, 10);
+      if (isNaN(v) || v < 0) v = 0;
+      qty.value = v;
+      cb.checked = v > 0;
+    };
+
+    qty.addEventListener('input', sync);
+    qty.addEventListener('change', sync);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.menu-item input[type="checkbox"]').forEach(linkCheckbox);
+    document.querySelectorAll('.menu-item input[type="number"]').forEach(linkNumber);
+
+    // Synchronisation initiale (ne modifie pas les cases déjà cochées)
+    document.querySelectorAll('.menu-item input[type="number"]').forEach(qty => {
+      let v = parseInt(qty.value, 10);
+      if (isNaN(v) || v < 0) v = 0;
+      qty.value = v;
+      // Met à jour la case si l'utilisateur a rechargé avec des valeurs
+      const id = qty.id;
+      let cb = null;
+      if (id) cb = document.querySelector(`input[type="checkbox"][data-target="${CSS.escape(id)}"]`);
+      if (!cb) {
+        const item = qty.closest('.menu-item');
+        if (item) cb = item.querySelector('input[type="checkbox"]');
+      }
+      if (cb) cb.checked = v > 0;
+    });
+  });
+})();
+
+
+
 function generateOrderSummary() {
   var groupedSummary = {};
 

@@ -434,3 +434,75 @@ body.halloween footer a {
 body.halloween footer a:hover {
   color: #ffd8a8 !important;           /* hover plus clair */
 }
+
+
+
+/* =====================
+   ✅ Anti-shift global quand on ouvre/ferme la popup
+   ===================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  /* Réserve la place du scrollbar -> évite le "saut" horizontal */
+  scrollbar-gutter: stable;
+}
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* aucune barre de défilement horizontale */
+}
+
+/* Harmoniser la nav avec le flex défini dans le HTML et éviter les débordements */
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+nav a { float: none; }
+
+/* Canvas décoratif : ne doit jamais créer de débordement */
+#petalsCanvas {
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  top: 0;
+}
+
+/* =====================
+   ✅ Correctif Popup Responsive (déjà proposé, on le garde)
+   ===================== */
+#popupOverlay {
+  position: fixed;
+  inset: 0;
+  padding: 16px;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.popupBox {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(92vw, 420px);
+  max-height: 90vh;
+  overflow: auto;
+  box-sizing: border-box;
+  margin: auto;
+  padding: 24px 16px 12px;
+}
+
+@media (max-width: 400px) {
+  .popupBox img { height: 72px !important; }
+}
+
+.popup-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: gray;
+}
+
+.popup-meta a { color: gray; text-decoration: underline; }
