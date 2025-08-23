@@ -74,3 +74,50 @@
     }
   }).observe(document.body, { childList: true, subtree: true });
 })();
+
+
+//reset ui
+
+(function () {
+  'use strict';
+
+  function triggerUISync() {
+    // Met tous les nombres à 0 (au cas où) + notifie
+    document.querySelectorAll('.menu-item input[type="number"]').forEach(n => {
+      if (n.value !== '0') n.value = 0;
+      n.dispatchEvent(new Event('input', { bubbles: true }));
+      n.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    // Notifie les checkbox pour que le pill "Ajouter/Ajouté" se re-render
+    document.querySelectorAll('.menu-item input[type="checkbox"]').forEach(cb => {
+      // On ne force pas l'état ici (le reset d'origine s'en charge),
+      // on se contente de déclencher le "change" pour rafraîchir l'UI.
+      cb.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  }
+
+  function wrapReset() {
+    const orig = window.resetOrder;
+    if (typeof orig !== 'function') return false;
+
+    if (orig.__wrapped_by_ui_patch) return true;
+
+    window.resetOrder = function wrappedResetOrder() {
+      const res = orig.apply(this, arguments);
+      // Assure-toi que l'UI est sync juste après
+      requestAnimationFrame(triggerUISync);
+      return res;
+    };
+    window.resetOrder.__wrapped_by_ui_patch = true;
+    return true;
+  }
+
+  // Tente immédiatement, puis au DOM ready si resetOrder n'est pas encore défini
+  if (!wrapReset()) {
+    document.addEventListener('DOMContentLoaded', wrapReset, { once: true });
+  }
+
+  // Au cas où le reset se ferait autrement (form reset, etc.), expose manuellement :
+  window.__forceSelectionUISync = triggerUISync;
+})();
