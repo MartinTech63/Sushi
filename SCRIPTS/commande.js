@@ -72,7 +72,6 @@
       const prev = cb.checked;
       cb.checked = v > 0;
       if (cb.checked !== prev) {
-        // Notifie le reste de l'UI (ex: bouton "Ajouter/Ajouté")
         cb.dispatchEvent(new Event('change', { bubbles: true }));
       }
     };
@@ -81,17 +80,61 @@
     qty.addEventListener('change', sync);
   }
 
+  // --- Nouvelle fonctionnalité : boutons + / - tactiles ---
+  function attachQuantityButtons(container) {
+    const input = container.querySelector('input[type="number"]');
+    if (!input) return;
+
+    const btnMinus = document.createElement('button');
+    btnMinus.type = 'button';
+    btnMinus.className = 'quantity-btn';
+    btnMinus.textContent = '-';
+
+    const btnPlus = document.createElement('button');
+    btnPlus.type = 'button';
+    btnPlus.className = 'quantity-btn';
+    btnPlus.textContent = '+';
+
+    // Wrap input dans un conteneur
+    const wrapper = document.createElement('div');
+    wrapper.className = 'quantity-container';
+    container.insertBefore(wrapper, input);
+    wrapper.appendChild(btnMinus);
+    wrapper.appendChild(input);
+    wrapper.appendChild(btnPlus);
+
+    // Actions des boutons
+    btnMinus.addEventListener('click', () => {
+      const min = parseInt(input.min, 10) || 0;
+      let val = parseInt(input.value, 10) || 0;
+      if (val > min) input.value = val - 1;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+
+    btnPlus.addEventListener('click', () => {
+      const max = parseInt(input.max, 10) || 10;
+      let val = parseInt(input.value, 10) || 0;
+      if (val < max) input.value = val + 1;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
+    // Synchronisation checkbox ↔ input
     document.querySelectorAll('.menu-item input[type="checkbox"]').forEach(linkCheckbox);
     document.querySelectorAll('.menu-item input[type="number"]').forEach(linkNumber);
 
-    // Synchronisation initiale (met à jour la case et notifie si nécessaire)
+    // Injections boutons + / - pour tous les champs number
+    document.querySelectorAll('.menu-item').forEach(item => {
+      attachQuantityButtons(item);
+    });
+
+    // Synchronisation initiale
     document.querySelectorAll('.menu-item input[type="number"]').forEach(qty => {
       let v = parseInt(qty.value, 10);
       if (isNaN(v) || v < 0) v = 0;
       qty.value = v;
 
-      // Met à jour la case si l'utilisateur a rechargé avec des valeurs
       const id = qty.id;
       let cb = null;
       if (id) cb = document.querySelector(`input[type="checkbox"][data-target="${CSS.escape(id)}"]`);
@@ -110,8 +153,7 @@
   });
 })();
 
-
-
+// --- generateOrderSummary() inchangé ---
 function generateOrderSummary() {
   var groupedSummary = {};
 
@@ -122,7 +164,7 @@ function generateOrderSummary() {
 
     if (!groupedSummary[category]) groupedSummary[category] = [];
 
-    // === Boules de glace : cas spécial ===
+    // Boules de glace : cas spécial
     if (itemName === 'Boule de glace') {
       item.querySelectorAll('input[type="checkbox"]').forEach(function(flavorCheckbox) {
         if (flavorCheckbox.checked) {
@@ -137,7 +179,7 @@ function generateOrderSummary() {
       return;
     }
 
-    // === Cas général ===
+    // Cas général
     var checkbox = item.querySelector('input[type="checkbox"]');
     var quantityInput = item.querySelector('input[type="number"]');
     if (checkbox && checkbox.checked) {
@@ -148,7 +190,7 @@ function generateOrderSummary() {
     }
   });
 
-  // Supprimer les catégories vides
+  // Supprimer catégories vides
   Object.keys(groupedSummary).forEach(category => {
     if (groupedSummary[category].length === 0) delete groupedSummary[category];
   });
@@ -156,7 +198,7 @@ function generateOrderSummary() {
   // Vérifie si Halloween est actif
   const isHalloween = document.body.classList.contains("halloween");
 
-  // ==== Palette couleurs ====
+  // Palette couleurs
   const colors = isHalloween ? {
     pageBg: '#111111',
     boxBg: '#0b0b0b',
@@ -175,7 +217,7 @@ function generateOrderSummary() {
     titleEmoji: '🧾 '
   };
 
-  // ==== Canvas ====
+  // Création canvas et export PNG (inchangé)
   var canvas = document.createElement('canvas');
   var ctx = canvas.getContext('2d');
 
@@ -204,16 +246,13 @@ function generateOrderSummary() {
   var year = today.getFullYear();
   var date = `${day}.${month}.${year}`;
 
-  // Logo dynamique selon mode
   var logo = new Image();
   logo.src = isHalloween ? 'SOURCES/logo_white.png' : 'SOURCES/logo.png';
 
   logo.onload = function () {
-    // Fond global
     ctx.fillStyle = colors.pageBg;
     ctx.fillRect(0, 0, canvas.width / scale, canvas.height / scale);
 
-    // Box
     const boxPadding = 20;
     ctx.shadowColor = isHalloween ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.1)';
     ctx.shadowBlur = isHalloween ? 16 : 10;
@@ -224,26 +263,17 @@ function generateOrderSummary() {
     ctx.fillRect(boxPadding, boxPadding, (canvas.width / scale) - 2 * boxPadding, (canvas.height / scale) - 2 * boxPadding);
     ctx.shadowBlur = 10;
 
-    // Titre
     const titleText = `${colors.titleEmoji}Liste de la commande du ${date}`;
     ctx.fillStyle = colors.accent;
     ctx.font = 'bold 26px Arial';
     const titleY = boxPadding + 40;
     ctx.fillText(titleText, boxPadding + 20, titleY);
 
-    // Logo
     const logoHeight = 55;
     const aspectRatio = logo.width / logo.height;
     const logoWidth = logoHeight * aspectRatio;
-    ctx.drawImage(
-      logo,
-      (canvas.width / scale) - boxPadding - logoWidth - 10,
-      boxPadding + 0,
-      logoWidth,
-      logoHeight
-    );
+    ctx.drawImage(logo, (canvas.width / scale) - boxPadding - logoWidth - 10, boxPadding + 0, logoWidth, logoHeight);
 
-    // Ligne
     ctx.strokeStyle = colors.line;
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -251,9 +281,7 @@ function generateOrderSummary() {
     ctx.lineTo((canvas.width / scale) - boxPadding - 20, titleY + 15);
     ctx.stroke();
 
-    // Contenu
     let currentY = titleY + 50;
-
     Object.keys(groupedSummary).forEach(function(category) {
       const categoryText = `— ${category.toUpperCase()} —`;
       ctx.font = 'bold 22px Arial';
@@ -268,7 +296,6 @@ function generateOrderSummary() {
 
       currentY += itemSpacing;
 
-      // Items
       ctx.fillStyle = colors.text;
       ctx.font = '18px Arial';
       groupedSummary[category].forEach(function(item) {
@@ -279,19 +306,14 @@ function generateOrderSummary() {
       currentY += categorySpacing;
     });
 
-    // Footer
     ctx.fillStyle = colors.footer;
     ctx.font = 'italic 18px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText(
-      isHalloween ? "Merci pour votre commande 👻" : "Merci pour votre commande 🍨",
-      (canvas.width / scale) / 2,
-      (canvas.height / scale) - boxPadding - 40
-    );
+    ctx.fillText(isHalloween ? "Merci pour votre commande 👻" : "Merci pour votre commande 🍨",
+                 (canvas.width / scale) / 2, (canvas.height / scale) - boxPadding - 40);
     ctx.fillText("https://sushi.martintech.fr/", (canvas.width / scale) / 2, (canvas.height / scale) - boxPadding - 20);
     ctx.textAlign = 'start';
 
-    // Export PNG
     var img = canvas.toDataURL('image/png');
     var link = document.createElement('a');
     link.href = img;
@@ -299,3 +321,4 @@ function generateOrderSummary() {
     link.click();
   };
 }
+

@@ -590,3 +590,146 @@ body.halloween .menu-item.is-selected {
   gap: 8px;
   flex-wrap: wrap;
 }
+
+/* === Bloc quantité compact et cohérent avec ton style actuel === */
+.quantity-container {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 9999px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+/* Boutons + / - (style cohérent avec .select-btn) */
+.quantity-btn {
+  appearance: none;
+  background: linear-gradient(#fff, #f6f6f6);
+  border: none;
+  border-right: 1px solid #ddd;
+  color: #444;
+  width: 38px;
+  height: 38px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.06s ease, box-shadow 0.2s ease;
+}
+
+.quantity-btn:last-child {
+  border-left: 1px solid #ddd;
+  border-right: none;
+}
+
+.quantity-btn:hover {
+  background: linear-gradient(#fffaf3, #ffe0b2);
+  transform: translateY(-1px);
+}
+
+.quantity-btn:active {
+  background: linear-gradient(#ffb759, #ff9800);
+  color: #fff;
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(255,152,0,0.25);
+}
+
+/* Input centré, intégré au bloc */
+.quantity-container input[type="number"] {
+  width: 60px;
+  height: 38px;
+  text-align: center;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #444;
+  padding: 0;
+  margin: 0;
+  line-height: 38px;
+  -moz-appearance: textfield;
+}
+
+/* Supprimer les flèches natives */
+.quantity-container input[type="number"]::-webkit-inner-spin-button,
+.quantity-container input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Responsive mobile */
+@media (max-width: 480px) {
+  .quantity-btn {
+    width: 46px;
+    height: 46px;
+    font-size: 1.3rem;
+  }
+  .quantity-container input[type="number"] {
+    width: 70px;
+    height: 46px;
+    font-size: 1.2rem;
+    line-height: 46px;
+  }
+}
+
+/* === Variante Halloween === */
+body.halloween .quantity-container {
+  background: #1b1b1b;
+  border: 1px solid #333;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.5);
+}
+
+body.halloween .quantity-btn {
+  background: linear-gradient(#2a2a2a, #1a1a1a);
+  color: #ffd8a8;
+  border-color: #333;
+}
+
+body.halloween .quantity-btn:hover {
+  background: linear-gradient(#333, #222);
+  color: #ff9f1c;
+}
+
+body.halloween .quantity-btn:active {
+  background: linear-gradient(#ff7a2e, #ff6600);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(255,102,0,0.35);
+}
+
+body.halloween .quantity-container input[type="number"] {
+  background: transparent;
+  color: #ffd8a8;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;           /* centre verticalement */
+  justify-content: space-between;
+  flex-wrap: nowrap;             /* reste sur une seule ligne */
+  gap: 10px;
+}
+
+/* le texte prend la place nécessaire mais pas plus que disponible */
+.menu-item span {
+  flex: 1 1 auto;                /* peut s’étendre mais aussi se réduire */
+  white-space: normal;           /* permet les retours à la ligne si besoin */
+  overflow-wrap: break-word;     /* casse les mots longs proprement */
+  margin-right: 10px;            /* espace entre le texte et la suite */
+}
+
+/* bloc quantité reste à droite */
+.menu-item .quantity-container {
+  flex-shrink: 0;                /* ne rétrécit pas */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* même traitement pour la checkbox */
+.menu-item input[type="checkbox"] {
+  flex-shrink: 0;
+  margin-left: 10px;
+}
