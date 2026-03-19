@@ -98,7 +98,10 @@
     // Wrap input dans un conteneur
     const wrapper = document.createElement('div');
     wrapper.className = 'quantity-container';
-    container.insertBefore(wrapper, input);
+
+    const parent = input.parentNode;
+    if (!parent) return;
+    parent.insertBefore(wrapper, input);
     wrapper.appendChild(btnMinus);
     wrapper.appendChild(input);
     wrapper.appendChild(btnPlus);
@@ -246,14 +249,11 @@ function generateOrderSummary() {
   var year = today.getFullYear();
   var date = `${day}.${month}.${year}`;
 
-  var logo = new Image();
-  logo.src = isHalloween ? 'SOURCES/logo_white.png' : 'SOURCES/logo.png';
-
-  logo.onload = function () {
+  function drawAndDownload(logoImage) {
     ctx.fillStyle = colors.pageBg;
     ctx.fillRect(0, 0, canvas.width / scale, canvas.height / scale);
 
-    const boxPadding = 20;
+    var boxPadding = 20;
     ctx.shadowColor = isHalloween ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.1)';
     ctx.shadowBlur = isHalloween ? 16 : 10;
     ctx.shadowOffsetX = 0;
@@ -263,16 +263,18 @@ function generateOrderSummary() {
     ctx.fillRect(boxPadding, boxPadding, (canvas.width / scale) - 2 * boxPadding, (canvas.height / scale) - 2 * boxPadding);
     ctx.shadowBlur = 10;
 
-    const titleText = `${colors.titleEmoji}Liste de la commande du ${date}`;
+    var titleText = colors.titleEmoji + 'Liste de la commande du ' + date;
     ctx.fillStyle = colors.accent;
     ctx.font = 'bold 26px Arial';
-    const titleY = boxPadding + 40;
+    var titleY = boxPadding + 40;
     ctx.fillText(titleText, boxPadding + 20, titleY);
 
-    const logoHeight = 55;
-    const aspectRatio = logo.width / logo.height;
-    const logoWidth = logoHeight * aspectRatio;
-    ctx.drawImage(logo, (canvas.width / scale) - boxPadding - logoWidth - 10, boxPadding + 0, logoWidth, logoHeight);
+    if (logoImage && logoImage.width && logoImage.height) {
+      var logoHeight = 55;
+      var aspectRatio = logoImage.width / logoImage.height;
+      var logoWidth = logoHeight * aspectRatio;
+      ctx.drawImage(logoImage, (canvas.width / scale) - boxPadding - logoWidth - 10, boxPadding + 0, logoWidth, logoHeight);
+    }
 
     ctx.strokeStyle = colors.line;
     ctx.lineWidth = 2;
@@ -281,12 +283,12 @@ function generateOrderSummary() {
     ctx.lineTo((canvas.width / scale) - boxPadding - 20, titleY + 15);
     ctx.stroke();
 
-    let currentY = titleY + 50;
+    var currentY = titleY + 50;
     Object.keys(groupedSummary).forEach(function(category) {
-      const categoryText = `— ${category.toUpperCase()} —`;
+      var categoryText = '— ' + category.toUpperCase() + ' —';
       ctx.font = 'bold 22px Arial';
-      const textWidth = ctx.measureText(categoryText).width;
-      const centerX = ((canvas.width / scale) - textWidth) / 2;
+      var textWidth = ctx.measureText(categoryText).width;
+      var centerX = ((canvas.width / scale) - textWidth) / 2;
 
       ctx.fillStyle = colors.boxBg;
       ctx.fillRect(centerX - 10, currentY - 24, textWidth + 20, 32);
@@ -299,7 +301,7 @@ function generateOrderSummary() {
       ctx.fillStyle = colors.text;
       ctx.font = '18px Arial';
       groupedSummary[category].forEach(function(item) {
-        ctx.fillText(`• ${item.name} - Quantité : ${item.quantity}`, boxPadding + 50, currentY);
+        ctx.fillText('• ' + item.name + ' - Quantité : ' + item.quantity, boxPadding + 50, currentY);
         currentY += itemSpacing;
       });
 
@@ -314,11 +316,24 @@ function generateOrderSummary() {
     ctx.fillText("https://sushi.martintech.fr/", (canvas.width / scale) / 2, (canvas.height / scale) - boxPadding - 20);
     ctx.textAlign = 'start';
 
-    var img = canvas.toDataURL('image/png');
-    var link = document.createElement('a');
-    link.href = img;
-    link.download = `Liste de la commande du ${date}.png`;
-    link.click();
-  };
+    try {
+      var img = canvas.toDataURL('image/png');
+      var link = document.createElement('a');
+      link.href = img;
+      link.download = 'Liste de la commande du ' + date + '.png';
+      link.click();
+    } catch (e) {
+      // En local (file://) avec des images non CORS, certains navigateurs
+      // bloquent toDataURL pour des raisons de sécurité.
+      alert("Impossible de générer l'image de la commande dans ce contexte (sécurité du navigateur).\\n" +
+            "Le téléchargement fonctionnera correctement depuis le site en ligne (https://sushi.martintech.fr/).");
+      console.error(e);
+    }
+  }
+
+  var logo = new Image();
+  logo.onload = function () { drawAndDownload(logo); };
+  logo.onerror = function () { drawAndDownload(null); };
+  logo.src = isHalloween ? 'SOURCES/logo_white.png' : 'SOURCES/logo.png';
 }
 

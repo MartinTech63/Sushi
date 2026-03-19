@@ -1,5 +1,9 @@
+(function () {
   const canvas = document.getElementById('petalsCanvas');
+  if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
@@ -62,14 +66,19 @@
     animationId = requestAnimationFrame(animate);
   }
 
-  function startPetals() {
-    createPetals();
-    animate();
+  function stopPetals() {
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = null;
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
-  function stopPetals() {
-    cancelAnimationFrame(animationId);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  function startPetals() {
+    // S'assure qu'une seule animation tourne à la fois
+    stopPetals();
+    createPetals();
+    animate();
   }
 
   // Resize
@@ -82,14 +91,19 @@
     const toggle = document.getElementById('petalToggle');
     const switchContainer = document.getElementById('petalSwitchContainer');
 
+    // Si on ne trouve pas les éléments, on ne fait rien
+    if (!toggle || !switchContainer) return;
+
     if (!isPetalSeason) {
-      // Cacher le switch ET désactiver les pétales
+      // Hors période : le switch disparaît complètement et les pétales sont coupées.
       switchContainer.style.display = 'none';
+      toggle.checked = false;
       stopPetals();
     } else {
-      // Période autorisée → démarrer + afficher le switch
-      startPetals();
+      // En période : switch visible, coché par défaut, pétales actives.
+      switchContainer.style.display = '';
       toggle.checked = true;
+      startPetals();
 
       toggle.addEventListener('change', function () {
         if (this.checked) {
@@ -101,21 +115,24 @@
     }
   });
 
-  // Popup fade + scroll lock
-  window.onload = function () {
-    const popup = document.getElementById("popupOverlay");
-    popup.style.display = "flex";
-    document.body.classList.add("noscroll");
-    setTimeout(() => {
-      popup.classList.add("show");
-    }, 10);
+  // Helpers de test pour la console (n'affectent pas la logique de dates)
+  window.__petalsTest = {
+    on() {
+      const toggle = document.getElementById('petalToggle');
+      const switchContainer = document.getElementById('petalSwitchContainer');
+      if (switchContainer) switchContainer.style.display = '';
+      if (toggle) toggle.checked = true;
+      startPetals();
+    },
+    off() {
+      const toggle = document.getElementById('petalToggle');
+      const switchContainer = document.getElementById('petalSwitchContainer');
+      if (switchContainer) switchContainer.style.display = '';
+      if (toggle) toggle.checked = false;
+      stopPetals();
+    }
   };
 
-  function closePopup() {
-    const popup = document.getElementById("popupOverlay");
-    popup.classList.remove("show");
-    document.body.classList.remove("noscroll");
-    setTimeout(() => {
-      popup.style.display = "none";
-    }, 500);
-  }
+  // La gestion de la popup (ouverture/fermeture + scroll lock)
+  // est centralisée dans `popup.js` pour éviter les doublons.
+})();

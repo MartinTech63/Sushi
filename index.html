@@ -8,6 +8,9 @@
   <!-- Favicon & Styles -->
   <link rel="icon" href="SOURCES/logo.png" type="image/png" />
   <link rel="stylesheet" href="styles.css" />
+  <!-- Thème Halloween & effets décoratifs séparés -->
+  <link rel="stylesheet" href="styles-halloween.css" />
+  <link rel="stylesheet" href="styles-petals.css" />
 
   <!-- Scripts (defer = chargés après l'analyse du DOM) -->
   <script src="SCRIPTS/clear.js" defer></script>
@@ -20,46 +23,25 @@
   <script src="SCRIPTS/ui.js" defer></script>
   <script src="SCRIPTS/id.js" defer></script>
   <script src="SCRIPTS/select-ui.js" defer></script>
+  <script src="SCRIPTS/logo-theme.js" defer></script>
+  <script src="SCRIPTS/share.js" defer></script>
 </head>
 
 <body>
-  <header style="top: 0; z-index: 1000;">
+  <header class="site-header">
     <img
       id="mainLogo"
+      class="site-header-logo"
       src="SOURCES/logo.png"
-      alt="Logo"
-      style="height: 50px; vertical-align: middle; position: relative; top: -12px;"
+      alt="Logo Manger des Sushis"
       onclick="playSound()"
     />
-    <h1 style="display: inline; margin-left: 10px;">Manger des Sushis</h1>
+    <h1 class="site-header-title">Manger des Sushis</h1>
   </header>
-
-  <!-- Gestion du changement de logo selon le thème -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const logoEl = document.getElementById("mainLogo");
-      if (!logoEl) return;
-
-      function updateLogo() {
-        if (document.body.classList.contains("halloween")) {
-          logoEl.src = "SOURCES/logo_white.png";
-        } else {
-          logoEl.src = "SOURCES/logo.png";
-        }
-      }
-
-      // mise à jour au chargement
-      updateLogo();
-
-      // surveille si la classe du body change (ex: activation/désactivation du thème)
-      const observer = new MutationObserver(updateLogo);
-      observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-    });
-  </script>
 
   <audio id="logoSound" src="SOURCES/cartoon_bite_sound_effect.mp3"></audio>
 
-  <nav style="top: 0; display: flex; flex-wrap: wrap; justify-content: center; z-index: 1000;">
+  <nav class="nav-bar">
     <a href="#entrees">Entrées</a>
     <a href="#accompagnement">Accompagnement et Wok</a>
     <a href="#yakitori">Yakitori</a>
@@ -70,50 +52,33 @@
   </nav>
 
   <!-- Popup d'accueil -->
-  <div id="popupOverlay" style="display: none;">
-    <div class="popupBox" style="position: relative; padding-bottom: 30px;">
-      <div style="text-align: center;">
-        <img src="SOURCES/logo.png" alt="Logo" style="height: 100px; margin-bottom: 10px;" />
-        <h2>Bienvenue sur Manger des Sushis&nbsp;!</h2>
-        <hr style="margin: 10px 0;" />
+  <div id="popupOverlay" class="popup-overlay" role="dialog" aria-modal="true" aria-labelledby="popupTitle" aria-hidden="true" style="display: none;">
+    <div class="popupBox popup-box-inner">
+      <div class="popup-box-content">
+        <img src="SOURCES/logo.png" alt="" class="popup-logo" />
+        <h2 id="popupTitle">Bienvenue sur Manger des Sushis&nbsp;!</h2>
+        <hr class="popup-hr" />
         <p>
           <strong>Manger des Sushis</strong> est un projet visant à faciliter la prise de commande au
           <strong>Hanami</strong>.<br />
           Il inclut une fonctionnalité permettant d'enregistrer sa commande. <br />
           Chaque personne peut générer une commande individuelle afin de retrouver facilement ce qu'elle a commandé lors du service.
         </p>
-        <hr style="margin: 10px 0;" />
-        <div id="petalSwitchContainer" class="switch-container" style="margin-top: 20px;">
+        <hr class="popup-hr" />
+        <div id="petalSwitchContainer" class="switch-container popup-switch">
           <span>Activer les pétales 🌸</span>
           <label class="switch">
             <input type="checkbox" id="petalToggle" />
             <span class="slider round"></span>
           </label>
         </div>
-        <button onclick="closePopup()" class="popup-btn" style="margin-top: 20px;">Fermer</button>
+        <button type="button" onclick="closePopup()" class="popup-btn">Fermer</button>
       </div>
-      <!-- Version du site en bas à droite -->
-      <p style="position: absolute; bottom: 0px; right: 10px; color: gray; font-size: 12px;">
-        <a href="https://github.com/MartinTech63/Sushi" target="_blank" style="text-decoration: underline; color: gray;">
-          v14.11.25
-        </a>
+      <p class="popup-meta popup-meta-right">
+        <a href="https://github.com/MartinTech63/Sushi" target="_blank" rel="noopener noreferrer">v18.03.26</a>
       </p>
-      <!-- Lien pour partager la page en bas à gauche -->
-      <p style="position: absolute; bottom: 0px; left: 10px; color: gray; font-size: 12px;">
-        <a href="#" onclick="
-                    if (navigator.share) {
-                        navigator.share({
-                            title: 'Manger des Sushis',
-                            text: 'Découvrez Manger des Sushis ! un projet visant à faciliter la prise de commande au Hanami 🍣',
-                            url: 'https://sushi.martintech.fr/'
-                        }).catch(console.error);
-                    } else {
-                        alert('Le partage est uniquement disponible sur un appareil compatible.');
-                    }
-                    return false;
-                " style="text-decoration: underline; color: gray;">
-          🔗 Partager ce site !
-        </a>
+      <p class="popup-meta popup-meta-left">
+        <a href="#" id="shareBtn">🔗 Partager ce site !</a>
       </p>
     </div>
   </div>
@@ -510,18 +475,18 @@
     </div>
   </div>
 
-  <!-- Canvas pour les pétales : un seul élément et à l'intérieur du <body> -->
-  <canvas id="petalsCanvas" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 0;"></canvas>
+  <!-- Canvas pour les pétales -->
+  <canvas id="petalsCanvas" class="petals-canvas"></canvas>
 
   <!-- Boutons d'action (doivent être dans le body) -->
   <button onclick="topFunction()" id="topBtn" title="Retour en haut">⬆️</button>
   <button onclick="generateOrderSummary()" id="orderSummaryBtn" title="Générer une commande">📝</button>
   <button onclick="resetOrder()" id="resetBtn" title="Réinitialiser la commande">🗑️</button>
 
-  <footer style="width: 100%; background-color: #ff9800; padding: 20px; text-align: center; margin-top: 20px; border-top: 2px solid #333; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); color: white;">
-    <h2 style="margin: 0; font-size: 1rem;">Fait avec le ❤️ - Martin Tech 2025</h2>
-    <h3 style="margin: 0; font-size: 0.8rem;">
-      <a href="https://github.com/MartinTech63/Sushi" target="_blank" style="color: white; text-decoration: underline;">Version : v14.11.25</a>
+  <footer class="site-footer">
+    <h2 class="site-footer-title">Fait avec le ❤️ - Martin Tech 2025</h2>
+    <h3 class="site-footer-version">
+      <a href="https://github.com/MartinTech63/Sushi" target="_blank" rel="noopener noreferrer">Version : v18.03.26</a>
     </h3>
   </footer>
 </body>

@@ -4,7 +4,6 @@ function generateOrderId() {
 
     function updateOrderId() {
         var orderId = btoa(JSON.stringify(orderData));
-        console.log("Updated Order ID:", orderId);
         return orderId;
     }
 

@@ -13,6 +13,24 @@ header {
     padding: 20px 0; /* Espacement vertical */
 }
 
+.site-header {
+    position: relative;
+    top: 0;
+    z-index: 1000;
+}
+
+.site-header-logo {
+    height: 50px;
+    vertical-align: middle;
+    position: relative;
+    top: -12px;
+}
+
+.site-header-title {
+    display: inline;
+    margin-left: 10px;
+}
+
 nav {
     background-color: #333; /* Couleur de fond de la navigation */
     overflow: hidden; /* Cache les débordements */
@@ -32,6 +50,14 @@ nav a:hover {
     color: black; /* Texte noir au survol */
 }
 
+.nav-bar {
+    top: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    z-index: 1000;
+}
+
 .container {
     padding: 20px; /* Espacement interne */
     display: flex; /* Affichage flex */
@@ -40,46 +66,34 @@ nav a:hover {
 }
 
 .menu-section {
-    margin-bottom: 40px; /* Marge inférieure */
-    width: 80%; /* Largeur relative */
+    margin-bottom: 40px;
+    width: 80%;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .menu-section h2 {
-    border-bottom: 2px solid #ff9800; /* Bordure orange en bas */
-    padding-bottom: 10px; /* Espacement sous le texte */
-    margin-bottom: 20px; /* Marge inférieure */
-    text-align: center; /* Centrer le texte */
-}
-
-.menu-item {
-    display: flex; /* Affichage en flex */
-    justify-content: space-between; /* Espacement entre les éléments */
-    padding: 10px 0; /* Espacement vertical */
-    border-bottom: 1px solid #ddd; /* Bordure inférieure grise */
-}
-
-.menu-item:last-child {
-    border-bottom: none; /* Supprime la bordure pour le dernier élément */
-}
-
-.menu-section {
-    background-color: #fff; /* Fond blanc */
-    border-radius: 8px; /* Bords arrondis */
-    padding: 10px; /* Espacement interne */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre douce */
+    border-bottom: 2px solid #ff9800;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 .menu-item {
     display: flex;
-    align-items: center; /* Aligne verticalement l'image et le texte */
+    align-items: center;
     justify-content: space-between;
+    flex-wrap: nowrap;
     padding: 10px;
     background-color: #fff;
     border: 1px solid #ddd;
     margin-bottom: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease; /* Transition douce */
+    transition: transform 0.3s ease;
+    gap: 10px;
 }
 
 .menu-item:last-child {
@@ -89,17 +103,18 @@ nav a:hover {
 .menu-item img {
     width: 80px;
     height: 80px;
-    object-fit: cover; /* Ajuste l'image sans déformation */
-    align-items: center;
-    border-radius: 8px; /* Coins arrondis */
+    object-fit: cover;
+    border-radius: 8px;
 }
 
 .menu-item span {
-    flex-grow: 1; /* Prend l'espace restant */
+    flex: 1 1 auto;
     margin-left: 10px;
-    align-items: center;
+    margin-right: 10px;
     font-size: 1rem;
     color: #555;
+    white-space: normal;
+    overflow-wrap: break-word;
 }
 
 input[type="number"] {
@@ -222,18 +237,18 @@ input[type="checkbox"] {
     background-color: #555;
 }
 
+.popup-overlay,
 #popupOverlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.6); /* Fond semi-transparent */
+    background-color: rgba(0,0,0,0.6);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
-
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.5s ease, visibility 0.5s ease;
@@ -252,6 +267,52 @@ input[type="checkbox"] {
     text-align: center;
     max-width: 400px;
     width: 80%;
+}
+
+.popup-box-inner {
+    position: relative;
+    padding-bottom: 30px;
+}
+
+.popup-box-content {
+    text-align: center;
+}
+
+.popup-logo {
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.popup-hr {
+    margin: 10px 0;
+}
+
+.popup-switch {
+    margin-top: 20px;
+}
+
+.popup-btn {
+    margin-top: 20px;
+}
+
+.popup-meta {
+    position: absolute;
+    bottom: 0;
+    font-size: 12px;
+    color: gray;
+}
+
+.popup-meta a {
+    text-decoration: underline;
+    color: gray;
+}
+
+.popup-meta-right {
+    right: 10px;
+}
+
+.popup-meta-left {
+    left: 10px;
 }
 
 .popupBox h2 {
@@ -335,109 +396,6 @@ input:checked + .slider:before {
     transform: translateX(24px); /* Déplacement du cercle */
 }
 /* =====================
-   🎃 Thème Halloween (fond noir, sans assets)
-   ===================== */
-body.halloween {
-  background-color: #000; /* Fond noir */
-  color: #f4f0e6;
-}
-
-/* Header */
-body.halloween header {
-  background-color: #1a1a1a;
-  border-bottom: 3px solid #ff6600;
-  color: #ff9f1c;
-  text-shadow: 0 0 8px rgba(255,100,0,0.5);
-}
-
-/* Navigation */
-body.halloween nav {
-  background-color: #111;
-}
-body.halloween nav a {
-  color: #eee;
-}
-body.halloween nav a:hover {
-  background-color: #222;
-  color: #ff6600;
-}
-
-/* Sections */
-body.halloween .menu-section {
-  background: #141414;
-  box-shadow: 0 4px 12px rgba(0,0,0,.7);
-  border: 1px solid #333;
-}
-body.halloween .menu-section h2 {
-  color: #ff9f1c;
-  border-bottom: 2px solid #ff6600;
-  text-shadow: 0 0 6px rgba(255,120,0,0.4);
-}
-
-/* Items */
-body.halloween .menu-item {
-  background: #1b1b1b;
-  border: 1px solid #333;
-  color: #f0e0d6;
-}
-body.halloween .menu-item span {
-  color: #ffd8a8;
-}
-
-/* Inputs */
-body.halloween input[type="number"] {
-  background: #000;
-  color: #fff;
-  border: 1px solid #555;
-}
-body.halloween input[type="number"]:focus {
-  border-color: #ff6600;
-  outline: none;
-  box-shadow: 0 0 4px #ff6600;
-}
-
-/* Boutons */
-body.halloween #topBtn,
-body.halloween #orderSummaryBtn,
-body.halloween #resetBtn,
-body.halloween .popup-btn {
-  background-color: #ff6600;
-  border: 2px solid #3a1a0f;
-  color: #fff;
-}
-body.halloween #topBtn:hover,
-body.halloween #orderSummaryBtn:hover,
-body.halloween #resetBtn:hover,
-body.halloween .popup-btn:hover {
-  background-color: #7b2c1f;
-}
-
-/* Footer */
-body.halloween footer {
-  background-color: #000 !important;   /* fond noir */
-  color: #eee !important;              /* texte clair */
-  border-top: 2px solid #ff6600 !important;
-  box-shadow: none !important;
-  width: 100% !important;              /* corrige width inline */
-}
-
-body.halloween footer h2,
-body.halloween footer h3 {
-  color: #eee !important;
-}
-
-body.halloween footer a {
-  color: #ff9f1c !important;           /* liens orange */
-  text-decoration: underline !important;
-}
-
-body.halloween footer a:hover {
-  color: #ffd8a8 !important;           /* hover plus clair */
-}
-
-
-
-/* =====================
    ✅ Anti-shift global quand on ouvre/ferme la popup
    ===================== */
 *, *::before, *::after { box-sizing: border-box; }
@@ -461,23 +419,47 @@ nav {
 }
 nav a { float: none; }
 
-/* Canvas décoratif : ne doit jamais créer de débordement */
-#petalsCanvas {
-  width: 100vw;
-  height: 100vh;
-  left: 0;
-  top: 0;
+.site-footer {
+  width: 100%;
+  background-color: #ff9800;
+  padding: 20px;
+  text-align: center;
+  margin-top: 20px;
+  border-top: 2px solid #333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: white;
+}
+
+.site-footer-title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.site-footer-version {
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.site-footer a {
+  color: white;
+  text-decoration: underline;
 }
 
 /* =====================
-   ✅ Correctif Popup Responsive (déjà proposé, on le garde)
+   ✅ Popup responsive & améliorations visuelles
    ===================== */
-#popupOverlay {
+#popupOverlay,
+.popup-overlay {
   position: fixed;
   inset: 0;
   padding: 16px;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
 }
 
 .popupBox {
@@ -489,7 +471,28 @@ nav a { float: none; }
   overflow: auto;
   box-sizing: border-box;
   margin: auto;
-  padding: 24px 16px 12px;
+  padding: 24px 18px 26px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #fff8f0 100%);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.32);
+  transform: translateY(8px) scale(0.98);
+  opacity: 0;
+  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+}
+
+/* Animation d'entrée lorsque la classe .show est posée sur l'overlay */
+#popupOverlay.show .popupBox,
+.popup-overlay.show .popupBox {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.popup-box-content p {
+  line-height: 1.5;
+}
+
+.popup-logo {
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.18));
 }
 
 @media (max-width: 400px) {
@@ -501,18 +504,27 @@ nav a { float: none; }
   justify-content: space-between;
   gap: 12px;
   margin-top: 12px;
-  font-size: 12px;
   color: gray;
 }
 
-.popup-meta a { color: gray; text-decoration: underline; }
+.popup-meta a {
+  color: gray;
+  text-decoration: underline;
+}
+
+/* Taille spécifique pour les liens de partage & version */
+.popup-meta-left a,
+.popup-meta-right a {
+  font-size: 11px;
+  font-weight: 400;
+}
 
 
 
 /* =====================
-   test boutons
+   Boutons de sélection (Ajouter/Ajouté) et accessibilité
    ===================== */
-/* Accessibilité : cacher visuellement sans retirer du flux SR */
+/* Cacher visuellement sans retirer du flux pour lecteurs d'écran */
 .visually-hidden {
   position: absolute !important;
   width: 1px !important;
@@ -565,18 +577,6 @@ nav a { float: none; }
 /* Petit gap pour aérer la ligne des contrôles */
 .menu-item {
   gap: 12px; /* garde ton flex existant, on ajoute l’espacement */
-}
-
-/* Variante Halloween (orange + fond sombre) */
-body.halloween .select-btn--checked {
-  background: linear-gradient(#ff7a2e, #ff6600);
-  border-color: #ff6600;
-  box-shadow: 0 2px 10px rgba(255,102,0,.35);
-}
-body.halloween .menu-item.is-selected {
-  background: #1a1410;
-  border-color: #ff6600;
-  box-shadow: 0 4px 14px rgba(255,102,0,.15);
 }
 
 /* Respecte les préférences d’animation */
@@ -675,54 +675,9 @@ body.halloween .menu-item.is-selected {
   }
 }
 
-/* === Variante Halloween === */
-body.halloween .quantity-container {
-  background: #1b1b1b;
-  border: 1px solid #333;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.5);
-}
-
-body.halloween .quantity-btn {
-  background: linear-gradient(#2a2a2a, #1a1a1a);
-  color: #ffd8a8;
-  border-color: #333;
-}
-
-body.halloween .quantity-btn:hover {
-  background: linear-gradient(#333, #222);
-  color: #ff9f1c;
-}
-
-body.halloween .quantity-btn:active {
-  background: linear-gradient(#ff7a2e, #ff6600);
-  color: #fff;
-  box-shadow: 0 2px 6px rgba(255,102,0,0.35);
-}
-
-body.halloween .quantity-container input[type="number"] {
-  background: transparent;
-  color: #ffd8a8;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;           /* centre verticalement */
-  justify-content: space-between;
-  flex-wrap: nowrap;             /* reste sur une seule ligne */
-  gap: 10px;
-}
-
-/* le texte prend la place nécessaire mais pas plus que disponible */
-.menu-item span {
-  flex: 1 1 auto;                /* peut s’étendre mais aussi se réduire */
-  white-space: normal;           /* permet les retours à la ligne si besoin */
-  overflow-wrap: break-word;     /* casse les mots longs proprement */
-  margin-right: 10px;            /* espace entre le texte et la suite */
-}
-
 /* bloc quantité reste à droite */
 .menu-item .quantity-container {
-  flex-shrink: 0;                /* ne rétrécit pas */
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
