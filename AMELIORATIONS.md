@@ -1,4 +1,4 @@
-# Améliorations proposées – Manger des Sushis
+# Améliorations proposées – Manger des Sushis 
 
 ## 1. Nettoyage du code
 
