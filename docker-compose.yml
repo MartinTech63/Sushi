@@ -1,0 +1,17 @@
+services:
+  sushi:
+    container_name: sushi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - sushi-data:/data
+    environment:
+      DATABASE_URL: /data/sushi.db
+    restart: unless-stopped
+
+volumes:
+  sushi-data:
+

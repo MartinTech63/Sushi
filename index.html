@@ -25,6 +25,7 @@
   <script src="SCRIPTS/select-ui.js" defer></script>
   <script src="SCRIPTS/logo-theme.js" defer></script>
   <script src="SCRIPTS/share.js" defer></script>
+  <script src="SCRIPTS/table.js" defer></script>
 </head>
 
 <body>
@@ -42,14 +43,12 @@
   <audio id="logoSound" src="SOURCES/cartoon_bite_sound_effect.mp3"></audio>
 
   <nav class="nav-bar">
-    <a href="#entrees">Entrées</a>
-    <a href="#accompagnement">Accompagnement et Wok</a>
-    <a href="#yakitori">Yakitori</a>
-    <a href="#sushi">Sushi</a>
-    <a href="#temaki">Temaki</a>
-    <a href="#maki_california">Maki &amp; California</a>
-    <a href="#desserts">Desserts</a>
+    <a href="#carte" id="tabCarteBtn">Carte</a>
+    <a href="#table" id="tabTableBtn">Table</a>
   </nav>
+
+  <!-- Spacer dynamique pour éviter que le contenu soit masqué par le menu fixe -->
+  <div id="menuSpacer" style="height: 0px;"></div>
 
   <!-- Popup d'accueil -->
   <div id="popupOverlay" class="popup-overlay" role="dialog" aria-modal="true" aria-labelledby="popupTitle" aria-hidden="true" style="display: none;">
@@ -72,6 +71,7 @@
             <span class="slider round"></span>
           </label>
         </div>
+
         <button type="button" onclick="closePopup()" class="popup-btn">Fermer</button>
       </div>
       <p class="popup-meta popup-meta-right">
@@ -80,6 +80,76 @@
       <p class="popup-meta popup-meta-left">
         <a href="#" id="shareBtn">🔗 Partager ce site !</a>
       </p>
+    </div>
+  </div>
+
+  <!-- Table partagée (liste temps réel sur la page principale) -->
+  <div
+    id="tableSummaryPanel"
+    style="display:none; width: 80%; margin: 20px auto 0 auto; background:#fff; border: 1px solid #eee; border-radius: 12px; padding: 16px 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);"
+  >
+    <div style="font-weight:700; color:#ff9800; margin-bottom:8px;">Table partagée (commande temps réel)</div>
+
+    <div
+      id="tableAuthBox"
+      style="display:block; margin-top: 10px; padding: 12px 12px; border: 1px dashed #ddd; border-radius: 12px; background: #fafafa;"
+    >
+      <div style="font-weight:700; color:#333; margin-bottom:8px;">Créer / Rejoindre une table</div>
+      <div style="color:#666; font-size:0.95rem; margin-bottom:12px;">
+        Sur l’onglet “Table”, vous assignez votre commande à un code de table. Tout le monde sur la même table envoie sa commande, puis le serveur affiche
+        le total en temps réel (et le total par utilisateur). Les tables expirent au bout de 3h.
+      </div>
+
+      <div style="margin: 10px 0;">
+        <label style="display:block; margin-bottom:6px;">Votre pseudo</label>
+        <input
+          id="tableNicknameInput"
+          type="text"
+          maxlength="32"
+          placeholder="Ex: Alice"
+          style="width:100%; padding:10px; border-radius:10px; border:1px solid #ccc;"
+        />
+      </div>
+
+      <div style="margin: 10px 0;">
+        <label style="display:block; margin-bottom:6px;">Code de table (vide = créer)</label>
+        <input
+          id="tableCodeInput"
+          type="text"
+          maxlength="16"
+          placeholder="XXXXXX"
+          style="width:100%; padding:10px; border-radius:10px; border:1px solid #ccc;"
+        />
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:12px;">
+        <button type="button" id="createTableBtn" class="popup-btn" style="margin-top:0;">Créer une table</button>
+        <button type="button" id="joinTableBtn" class="popup-btn" style="margin-top:0;">Rejoindre</button>
+      </div>
+    </div>
+
+    <div id="tableLiveBox" style="display:none;">
+      <div style="color:#555; margin: 14px 0 12px 0;">
+        Code : <span id="tableCodeBadgeText">-</span> |
+        Pseudo : <span id="tableNicknameBadgeText">-</span>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-bottom:12px;">
+        <button type="button" id="submitOrderBtn" class="popup-btn" style="margin-top:0;">Envoyer à la table</button>
+        <button type="button" id="leaveTableBtn" class="popup-btn" style="margin-top:0; background-color:#555;">Quitter</button>
+      </div>
+
+      <div id="tableLiveStatus" style="text-align:center; margin: 6px 0 12px 0; color:#666;">Aucune table active.</div>
+
+      <div style="margin-top:10px;">
+        <div style="font-weight:700; margin-bottom:8px; color:#333;">Total table</div>
+        <div id="tableSummaryItems" style="display:flex; flex-direction:column; gap:8px;"></div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div style="font-weight:700; margin-bottom:8px; color:#333;">Commandes par personne</div>
+        <div id="tableSummaryClients" style="display:flex; flex-direction:column; gap:10px;"></div>
+      </div>
     </div>
   </div>
 

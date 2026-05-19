@@ -4,6 +4,10 @@ body {
     margin: 0; /* Supprime les marges par défaut */
     padding: 0; /* Supprime les espacements internes */
     scroll-behavior: smooth; /* Défilement fluide */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-top: 0;
 }
 
 header {
@@ -15,8 +19,8 @@ header {
 
 .site-header {
     position: relative;
-    top: 0;
     z-index: 1000;
+    background-color: #ff9800;
 }
 
 .site-header-logo {
@@ -33,7 +37,7 @@ header {
 
 nav {
     background-color: #333; /* Couleur de fond de la navigation */
-    overflow: hidden; /* Cache les débordements */
+    overflow: visible; /* Permet à position: sticky de fonctionner correctement */
 }
 
 nav a {
@@ -51,11 +55,16 @@ nav a:hover {
 }
 
 .nav-bar {
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    z-index: 1000;
+    z-index: 2000;
+    background-color: #333;
+    width: 100%;
 }
 
 .container {
@@ -72,6 +81,12 @@ nav a:hover {
     border-radius: 8px;
     padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Evite que le contenu soit masqué par le menu fixe quand on scroll sur une ancre */
+    scroll-margin-top: 90px;
+}
+
+#tableSummaryPanel {
+    scroll-margin-top: 90px;
 }
 
 .menu-section h2 {
@@ -424,7 +439,7 @@ nav a { float: none; }
   background-color: #ff9800;
   padding: 20px;
   text-align: center;
-  margin-top: 20px;
+    margin-top: auto;
   border-top: 2px solid #333;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   color: white;
@@ -458,8 +473,11 @@ nav a { float: none; }
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 6000;
   background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(3px);
+  align-items: flex-start;
+  padding-top: calc(var(--menu-offset, 0px) + 16px);
 }
 
 .popupBox {
@@ -673,6 +691,16 @@ nav a { float: none; }
     font-size: 1.2rem;
     line-height: 46px;
   }
+}
+
+/* =========
+   Popup: override final (evite les chevauchements avec menu fixe)
+   ========= */
+#popupOverlay,
+.popup-overlay {
+  z-index: 6000 !important;
+  align-items: flex-start !important;
+  padding-top: calc(var(--menu-offset, 0px) + 16px) !important;
 }
 
 /* bloc quantité reste à droite */

@@ -38,6 +38,15 @@
     popup = document.getElementById("popupOverlay");
     if (!popup) return;
 
+    // Assure que la variable de décalage du menu fixe existe (fallback).
+    try {
+      var nav = document.querySelector('nav.nav-bar');
+      if (nav) {
+        var rect = nav.getBoundingClientRect();
+        document.documentElement.style.setProperty('--menu-offset', rect.bottom + 'px');
+      }
+    } catch (e) {}
+
     previousActiveElement = document.activeElement;
     popup.style.display = "flex";
     popup.setAttribute("aria-hidden", "false");

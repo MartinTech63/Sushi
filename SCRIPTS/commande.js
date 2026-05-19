@@ -82,43 +82,51 @@
 
   // --- Nouvelle fonctionnalité : boutons + / - tactiles ---
   function attachQuantityButtons(container) {
-    const input = container.querySelector('input[type="number"]');
-    if (!input) return;
+    const inputs = container.querySelectorAll('input[type="number"]');
+    if (!inputs || inputs.length === 0) return;
 
-    const btnMinus = document.createElement('button');
-    btnMinus.type = 'button';
-    btnMinus.className = 'quantity-btn';
-    btnMinus.textContent = '-';
+    inputs.forEach((input) => {
+      if (!input) return;
 
-    const btnPlus = document.createElement('button');
-    btnPlus.type = 'button';
-    btnPlus.className = 'quantity-btn';
-    btnPlus.textContent = '+';
+      // Évite de ré-injecter si l'input est déjà dans un wrapper.
+      if (input.closest('.quantity-container')) return;
 
-    // Wrap input dans un conteneur
-    const wrapper = document.createElement('div');
-    wrapper.className = 'quantity-container';
+      const btnMinus = document.createElement('button');
+      btnMinus.type = 'button';
+      btnMinus.className = 'quantity-btn';
+      btnMinus.textContent = '-';
 
-    const parent = input.parentNode;
-    if (!parent) return;
-    parent.insertBefore(wrapper, input);
-    wrapper.appendChild(btnMinus);
-    wrapper.appendChild(input);
-    wrapper.appendChild(btnPlus);
+      const btnPlus = document.createElement('button');
+      btnPlus.type = 'button';
+      btnPlus.className = 'quantity-btn';
+      btnPlus.textContent = '+';
 
-    // Actions des boutons
-    btnMinus.addEventListener('click', () => {
-      const min = parseInt(input.min, 10) || 0;
-      let val = parseInt(input.value, 10) || 0;
-      if (val > min) input.value = val - 1;
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-    });
+      // Wrap input dans un conteneur
+      const wrapper = document.createElement('div');
+      wrapper.className = 'quantity-container';
 
-    btnPlus.addEventListener('click', () => {
-      const max = parseInt(input.max, 10) || 10;
-      let val = parseInt(input.value, 10) || 0;
-      if (val < max) input.value = val + 1;
-      input.dispatchEvent(new Event('input', { bubbles: true }));
+      const parent = input.parentNode;
+      if (!parent) return;
+
+      parent.insertBefore(wrapper, input);
+      wrapper.appendChild(btnMinus);
+      wrapper.appendChild(input);
+      wrapper.appendChild(btnPlus);
+
+      // Actions des boutons
+      btnMinus.addEventListener('click', () => {
+        const min = parseInt(input.min, 10) || 0;
+        let val = parseInt(input.value, 10) || 0;
+        if (val > min) input.value = val - 1;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+
+      btnPlus.addEventListener('click', () => {
+        const max = parseInt(input.max, 10) || 10;
+        let val = parseInt(input.value, 10) || 0;
+        if (val < max) input.value = val + 1;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      });
     });
   }
 
@@ -156,8 +164,7 @@
   });
 })();
 
-// --- generateOrderSummary() inchangé ---
-function generateOrderSummary() {
+function computeCurrentOrderSummary() {
   var groupedSummary = {};
 
   document.querySelectorAll('.menu-item').forEach(function(item) {
@@ -194,9 +201,32 @@ function generateOrderSummary() {
   });
 
   // Supprimer catégories vides
-  Object.keys(groupedSummary).forEach(category => {
+  Object.keys(groupedSummary).forEach(function(category) {
     if (groupedSummary[category].length === 0) delete groupedSummary[category];
   });
+
+  return groupedSummary;
+}
+
+function getCurrentOrderItems() {
+  var groupedSummary = computeCurrentOrderSummary();
+  var items = [];
+
+  Object.keys(groupedSummary).forEach(function(category) {
+    groupedSummary[category].forEach(function(it) {
+      items.push({
+        name: it.name,
+        quantity: parseInt(it.quantity, 10) || 0
+      });
+    });
+  });
+
+  return items;
+}
+
+// --- generateOrderSummary() ---
+function generateOrderSummary() {
+  var groupedSummary = computeCurrentOrderSummary();
 
   // Vérifie si Halloween est actif
   const isHalloween = document.body.classList.contains("halloween");
@@ -336,4 +366,6 @@ function generateOrderSummary() {
   logo.onerror = function () { drawAndDownload(null); };
   logo.src = isHalloween ? 'SOURCES/logo_white.png' : 'SOURCES/logo.png';
 }
+
+window.getCurrentOrderItems = getCurrentOrderItems;
 
