@@ -425,6 +425,8 @@
   const resetBtn = $('resetBtn');
 
   function setMainMenuButtonsVisible(visible) {
+    var actions = $('fabActions');
+    if (actions) actions.hidden = !visible;
     if (orderSummaryBtn) orderSummaryBtn.style.display = visible ? '' : 'none';
     if (resetBtn) resetBtn.style.display = visible ? '' : 'none';
   }

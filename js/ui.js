@@ -12,12 +12,14 @@ function adjustButtonPosition() {
     footerPush = Math.max(0, windowHeight - footerRect.top);
   }
 
-  var floatingBase = stickyActive ? 88 : 20;
-  var buttons = document.querySelectorAll('#topBtn, #orderSummaryBtn, #resetBtn');
-  buttons.forEach(function (button) {
-    if (!button) return;
-    button.style.bottom = footerPush + floatingBase + 'px';
-  });
+  var floatingBase = stickyActive ? 88 : 16;
+  var dock = document.getElementById('fabDock');
+  if (dock) {
+    dock.style.bottom =
+      'calc(' +
+      (footerPush + floatingBase) +
+      'px + env(safe-area-inset-bottom, 0px))';
+  }
 
   var stickyBar = document.getElementById('tableStickyBar');
   if (stickyBar) {
@@ -31,7 +33,7 @@ function adjustButtonPosition() {
 
   var toastHost = document.getElementById('toastHost');
   if (toastHost) {
-    var toastBase = stickyActive ? 90 : 20;
+    var toastBase = stickyActive ? 90 : 64;
     toastHost.style.bottom =
       'calc(' + (footerPush + toastBase) + 'px + env(safe-area-inset-bottom, 0px))';
   }
@@ -80,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
       'scroll',
       function () {
         var y = window.scrollY || document.documentElement.scrollTop;
-        topBtn.style.opacity = y > 20 ? '1' : '0';
+        topBtn.classList.toggle('is-visible', y > 120);
       },
       { passive: true }
     );

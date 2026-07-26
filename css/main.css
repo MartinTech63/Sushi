@@ -39,6 +39,9 @@ header,
   text-align: center;
   padding: 18px 16px 16px;
   border-bottom: 2px solid var(--ink);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .site-header-inner {
@@ -51,6 +54,7 @@ header,
 .site-header-logo {
   height: 52px;
   width: auto;
+  flex-shrink: 0;
   cursor: pointer;
 }
 
@@ -162,7 +166,7 @@ nav a:hover {
 .container,
 .menu-container {
     padding: 20px;
-    padding-bottom: 96px;
+    padding-bottom: 110px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -252,6 +256,15 @@ nav a:hover {
     flex-shrink: 0;
 }
 
+/* Ordre tactile : quantité puis Ajouter (Ajouter à droite) */
+.menu-item-actions .quantity-container {
+    order: 1;
+}
+
+.menu-item-actions .select-btn {
+    order: 2;
+}
+
 .menu-item--flavors {
     flex-wrap: wrap;
     align-items: flex-start;
@@ -280,6 +293,7 @@ nav a:hover {
     font-weight: 600;
     color: var(--ink);
     font-size: 0.95rem;
+    min-width: 0;
 }
 
 input[type="number"] {
@@ -296,25 +310,103 @@ input[type="checkbox"] {
     margin: 0;
 }
 
+/* Mobile : texte lisible en haut, boutons regroupés à droite en dessous */
 @media (max-width: 720px) {
     .menu-item {
         flex-wrap: wrap;
-        align-items: stretch;
+        align-items: flex-start;
+        gap: 8px 10px;
     }
 
     .menu-item-main {
+        flex: 1 1 100%;
         width: 100%;
+        min-width: 0;
+    }
+
+    .menu-item-name,
+    .menu-item span.menu-item-name {
+        font-size: 0.95rem;
+        line-height: 1.35;
     }
 
     .menu-item-actions {
+        flex: 1 1 100%;
         width: 100%;
-        justify-content: space-between;
+        justify-content: flex-end;
+        flex-wrap: nowrap;
+        gap: 8px;
+        margin-left: 0;
         padding-top: 2px;
+        box-sizing: border-box;
+    }
+
+    .menu-item--flavors > .menu-item-main {
+        width: 100%;
+    }
+
+    .menu-item-flavor {
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .menu-item-flavor-label {
+        flex: 1 1 auto;
+        min-width: 4.5rem;
+    }
+
+    .menu-item-flavor .menu-item-actions {
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 0;
+        margin-left: auto;
+        justify-content: flex-end;
     }
 
     .menu-item img {
-        width: 64px;
-        height: 64px;
+        width: 56px;
+        height: 56px;
+    }
+
+    .select-btn {
+        flex: 0 0 auto;
+        padding: 8px 12px;
+        font-size: 0.88rem;
+        white-space: nowrap;
+    }
+
+    .quantity-container {
+        flex: 0 0 auto;
+        height: 40px;
+        max-width: 100%;
+    }
+
+    .quantity-btn {
+        width: 36px;
+        min-width: 36px;
+    }
+
+    .quantity-container input[type="number"] {
+        width: 40px;
+    }
+}
+
+/* Très petit écran : parfums en 2 lignes pour éviter la coupe du + */
+@media (max-width: 420px) {
+    .menu-item-flavor {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .menu-item-flavor-label {
+        width: 100%;
+    }
+
+    .menu-item-flavor .menu-item-actions {
+        width: 100%;
+        margin-left: 0;
+        justify-content: flex-end;
     }
 }
 
@@ -324,66 +416,113 @@ input[type="checkbox"] {
     }
 }
 
-#topBtn {
-    display: block;
-    position: fixed;
-    bottom: 20px;
-    right: 30px;
-    z-index: 99;
-    font-size: 18px;
-    border: 2px solid var(--ink);
-    outline: none;
-    background-color: var(--shu);
-    color: white;
-    cursor: pointer;
-    padding: 15px;
-    border-radius: 8px;
-    opacity: 0;
-    transition: opacity 0.5s, background-color 0.15s ease;
+/* Barre d’actions flottante (Exporter / Vider / Haut) */
+.fab-dock {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  pointer-events: none;
 }
 
-#topBtn:hover {
-    background-color: var(--shu-deep);
+.fab-dock-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
 }
 
-#orderSummaryBtn {
-    display: block;
-    position: fixed;
-    bottom: 20px;
-    left: 30px;
-    z-index: 99;
-    font-size: 18px;
-    border: 2px solid var(--ink);
-    outline: none;
-    background-color: var(--shu);
-    color: white;
-    cursor: pointer;
-    padding: 15px;
-    border-radius: 8px;
+.fab-dock-actions[hidden] {
+  display: none !important;
 }
 
-#orderSummaryBtn:hover {
-    background-color: var(--shu-deep);
+.fab-btn {
+  pointer-events: auto;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(28, 25, 23, 0.18);
+  transition: background-color 0.15s ease, transform 0.08s ease, opacity 0.2s ease;
 }
 
-#resetBtn {
-    display: block;
-    position: fixed;
-    bottom: 20px;
-    left: 100px;
-    z-index: 99;
-    font-size: 18px;
-    border: 2px solid var(--ink);
-    outline: none;
-    background-color: var(--shu);
-    color: white;
-    cursor: pointer;
-    padding: 15px;
-    border-radius: 8px;
+.fab-btn:active {
+  transform: scale(0.97);
 }
 
-#resetBtn:hover {
-    background-color: var(--shu-deep);
+.fab-btn-label {
+  white-space: nowrap;
+}
+
+.fab-btn-icon {
+  display: block;
+  flex-shrink: 0;
+}
+
+.fab-btn--icon {
+  min-width: 44px;
+  padding-inline: 12px;
+}
+
+.fab-btn--primary {
+  background: var(--shu);
+  color: #fff;
+}
+
+.fab-btn--primary:hover {
+  background: var(--shu-deep);
+}
+
+.fab-btn--muted {
+  background: #fff;
+  color: var(--ink);
+}
+
+.fab-btn--muted:hover {
+  background: var(--shu-soft);
+}
+
+.fab-btn--top {
+  background: var(--nav);
+  color: #fff;
+  min-width: 44px;
+  padding-inline: 14px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease, background-color 0.15s ease, transform 0.08s ease;
+}
+
+.fab-btn--top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.fab-btn--top:hover {
+  background: #1a1714;
+}
+
+@media (max-width: 380px) {
+  .fab-btn {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
 }
 
 .popup-overlay,
@@ -816,20 +955,20 @@ nav a { float: none; }
 }
 
 @media (max-width: 480px) {
-  .quantity-container {
-    height: 44px;
+  .menu-item .quantity-container {
+    height: 42px;
   }
-  .quantity-btn {
-    width: 44px;
-    min-width: 44px;
-    font-size: 1.25rem;
+  .menu-item .quantity-btn {
+    width: 38px;
+    min-width: 38px;
+    font-size: 1.15rem;
   }
-  .quantity-container input[type="number"] {
-    width: 48px;
+  .menu-item .quantity-container input[type="number"] {
+    width: 42px;
   }
-  .select-btn {
-    min-height: 44px;
-    padding: 10px 14px;
+  .menu-item .select-btn {
+    min-height: 42px;
+    padding: 8px 12px;
   }
 }
 

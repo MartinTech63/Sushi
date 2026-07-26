@@ -65,19 +65,24 @@ body.halloween input[type="number"]:focus {
 }
 
 /* Boutons principaux et popup */
-body.halloween #topBtn,
-body.halloween #orderSummaryBtn,
-body.halloween #resetBtn,
+body.halloween .fab-btn--primary,
 body.halloween .popup-btn {
   background-color: #ff6600;
   border: 2px solid #3a1a0f;
   color: #fff;
 }
-body.halloween #topBtn:hover,
-body.halloween #orderSummaryBtn:hover,
-body.halloween #resetBtn:hover,
+body.halloween .fab-btn--primary:hover,
 body.halloween .popup-btn:hover {
   background-color: #7b2c1f;
+}
+body.halloween .fab-btn--muted {
+  background: #fff8f0;
+  border-color: #3a1a0f;
+  color: #3a1a0f;
+}
+body.halloween .fab-btn--top {
+  background: #1a0f0a;
+  border-color: #3a1a0f;
 }
 
 /* Footer */
