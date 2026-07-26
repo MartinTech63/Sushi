@@ -19,6 +19,21 @@ docker/             # entrypoint
 
 ## Déploiement Docker
 
+### Sur une VM (script)
+
+Place `deploy.sh` hors du dossier app (ou clone une fois), puis :
+
+```bash
+chmod +x deploy.sh
+./deploy.sh                 # git pull + docker compose up -d --build
+FORCE_CLEAN=1 ./deploy.sh   # clone frais (le .env est conservé)
+BRANCH_NAME=main ./deploy.sh
+```
+
+Par défaut : `TARGET_DIR=/root/Sushi`, branche `main`. Le volume Docker `sushi-data` (SQLite) n’est pas touché.
+
+### Manuel
+
 ```bash
 git clone https://github.com/MartinTech63/Sushi.git
 cd Sushi
