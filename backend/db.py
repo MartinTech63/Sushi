@@ -3,17 +3,22 @@ from __future__ import annotations
 import json
 import os
 import secrets
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, AsyncIterator, Dict, List, Optional, Tuple
 
 import aiosqlite
 
-DEFAULT_DATABASE_URL = "data/sushi.db"
+# SQLite file path (env name kept for compatibility with existing deploys).
+DEFAULT_DATABASE_PATH = "data/sushi.db"
 TABLE_TTL_SECONDS = 3 * 60 * 60  # 3h
 MAX_CLIENTS_PER_TABLE = int(os.getenv("MAX_CLIENTS_PER_TABLE", "20"))
 MAX_ITEMS_PER_ORDER = int(os.getenv("MAX_ITEMS_PER_ORDER", "50"))
 MAX_ITEMS_JSON_BYTES = int(os.getenv("MAX_ITEMS_JSON_BYTES", "20000"))
+
+# Back-compat alias
+DEFAULT_DATABASE_URL = DEFAULT_DATABASE_PATH
 
 
 def utc_now_iso() -> str:
@@ -26,12 +31,28 @@ def utc_plus_seconds_iso(seconds: int) -> str:
     ).isoformat()
 
 
+def get_database_path() -> Path:
+    raw = os.getenv("DATABASE_PATH") or os.getenv("DATABASE_URL") or DEFAULT_DATABASE_PATH
+    return Path(raw)
+
+
 def get_database_url() -> str:
-    return os.getenv("DATABASE_URL", DEFAULT_DATABASE_URL)
+    """Return the SQLite file path as a string (historical name)."""
+    return str(get_database_path())
+
+
+@asynccontextmanager
+async def connect_db() -> AsyncIterator[aiosqlite.Connection]:
+    """Open a SQLite connection with project defaults."""
+    db_path = get_database_path()
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    async with aiosqlite.connect(str(db_path)) as conn:
+        await conn.execute("PRAGMA foreign_keys=ON;")
+        yield conn
 
 
 async def init_db() -> None:
-    db_path = Path(get_database_url())
+    db_path = get_database_path()
     db_path.parent.mkdir(parents=True, exist_ok=True)
 
     async with aiosqlite.connect(str(db_path)) as db:

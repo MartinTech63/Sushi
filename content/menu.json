@@ -1,0 +1,449 @@
+{
+  "categories": [
+    {
+      "id": "entrees",
+      "title": "Entrées",
+      "items": [
+        {
+          "id": "salade_choux",
+          "code": "01",
+          "name": "Salade de Choux",
+          "image": "salade_de_choux.jpg",
+          "max": 10
+        },
+        {
+          "id": "soupe_miso",
+          "code": "02",
+          "name": "Soupe Miso",
+          "image": "soupe_miso.jpg",
+          "max": 10
+        },
+        {
+          "id": "beignet_poulet",
+          "code": "03",
+          "name": "Beignet de Poulet (4 morceaux)",
+          "image": "beignet_de_poulet.jpg",
+          "max": 10
+        },
+        {
+          "id": "beignet_calamar",
+          "code": "04",
+          "name": "Beignet de Calamars (4 pièces)",
+          "image": "beignet_de_calamars.jpg",
+          "max": 10
+        },
+        {
+          "id": "raviolis_japonais",
+          "code": "05",
+          "name": "Raviolis Japonais (4 pièces)",
+          "image": "raviolis_japonais.jpg",
+          "max": 10
+        },
+        {
+          "id": "tempura_crevettes",
+          "code": "06",
+          "name": "Tempura Crevettes (3 pièces)",
+          "image": "tempura_crevettes.jpg",
+          "max": 10
+        },
+        {
+          "id": "samoussa",
+          "code": "07",
+          "name": "Samoussa (2 pièces)",
+          "image": "samoussa.jpg",
+          "max": 10
+        },
+        {
+          "id": "nems_poulet",
+          "code": "08",
+          "name": "Nêms au Poulet (3 pièces)",
+          "image": "nems_au_poulet.jpg",
+          "max": 10
+        },
+        {
+          "id": "raviolis_crevette",
+          "code": "09",
+          "name": "Raviolis à la Crevette (3 pièces)",
+          "image": "raviolis_a_la_crevette.jpg",
+          "max": 10
+        },
+        {
+          "id": "bouchee_crevette",
+          "code": "10",
+          "name": "Bouchée à la Crevette (3 pièces)",
+          "image": "bouchee_a_la_crevette.jpg",
+          "max": 10
+        },
+        {
+          "id": "rouleaux_fromage",
+          "code": "18",
+          "name": "Rouleaux au Fromage (2 pièces)",
+          "image": "rouleaux_au_fromage.jpg",
+          "max": 10
+        }
+      ]
+    },
+    {
+      "id": "accompagnement",
+      "title": "Accompagnement et Wok",
+      "items": [
+        {
+          "id": "nouilles_sautees",
+          "code": "21",
+          "name": "Nouilles sautées",
+          "image": "nouilles_sautees.jpg",
+          "max": 10
+        },
+        {
+          "id": "riz_saute_a_la_japonaise",
+          "code": "22",
+          "name": "Riz sautées à la japonaise",
+          "image": "riz_saute_a_la_japonaise.jpg",
+          "max": 10
+        },
+        {
+          "id": "riz_nature",
+          "code": "23",
+          "name": "Riz nature",
+          "image": "riz_nature.jpg",
+          "max": 10
+        },
+        {
+          "id": "boeuf_aux_oignons",
+          "code": "24",
+          "name": "Boeuf aux oignons",
+          "image": "boeuf_aux_oignons.jpg",
+          "max": 10
+        },
+        {
+          "id": "crevettes_au_sel_et_poivre",
+          "code": "25",
+          "name": "Crevettes au sel et poivre",
+          "image": "crevettes_au_sel_et_poivre.jpg",
+          "max": 10
+        },
+        {
+          "id": "legumes_sautes",
+          "code": "26",
+          "name": "Légumes sautés",
+          "image": "legumes_sautes.jpg",
+          "max": 10
+        },
+        {
+          "id": "poisson_aux_5_parfums",
+          "code": "27",
+          "name": "Poisson aux 5 parfums",
+          "image": "poisson_aux_5_parfums.jpg",
+          "max": 10
+        }
+      ]
+    },
+    {
+      "id": "yakitori",
+      "title": "Yakitori",
+      "items": [
+        {
+          "id": "poulet",
+          "code": "11",
+          "name": "Poulet (2 pièces)",
+          "image": "poulet.jpg",
+          "max": 10
+        },
+        {
+          "id": "aile_de_poulet",
+          "code": "12",
+          "name": "Aile de poulet (2 pièces)",
+          "image": "aile_de_poulet.jpg",
+          "max": 10
+        },
+        {
+          "id": "boulette_de_poulet",
+          "code": "13",
+          "name": "Boulette de poulet (2 pièces)",
+          "image": "boulette_de_poulet.jpg",
+          "max": 10
+        },
+        {
+          "id": "champignon",
+          "code": "14",
+          "name": "Champignon (2 pièces)",
+          "image": "champignon.jpg",
+          "max": 10
+        },
+        {
+          "id": "boeuf",
+          "code": "15",
+          "name": "Boeuf (2 pièces)",
+          "image": "boeuf.jpg",
+          "max": 10
+        },
+        {
+          "id": "boeuf_au_fromage",
+          "code": "16",
+          "name": "Boeuf au fromage (2 pièces)",
+          "image": "boeuf_au_fromage.jpg",
+          "max": 10
+        },
+        {
+          "id": "courgette",
+          "code": "17",
+          "name": "Courgette (2 pièces)",
+          "image": "courgette.jpg",
+          "max": 10
+        }
+      ]
+    },
+    {
+      "id": "sushi",
+      "title": "Sushi",
+      "items": [
+        {
+          "id": "concombre",
+          "code": "30",
+          "name": "Concombre (2 pièces)",
+          "image": "concombre.jpg",
+          "max": 10
+        },
+        {
+          "id": "saumon",
+          "code": "31",
+          "name": "Saumon (2 pièces)",
+          "image": "saumon.jpg",
+          "max": 10
+        },
+        {
+          "id": "thon",
+          "code": "32",
+          "name": "Thon (2 pièces)",
+          "image": "thon.jpg",
+          "max": 10
+        },
+        {
+          "id": "daurade",
+          "code": "33",
+          "name": "Daurade (2 pièces)",
+          "image": "daurade.jpg",
+          "max": 10
+        },
+        {
+          "id": "crevette",
+          "code": "34",
+          "name": "Crevette (2 pièces)",
+          "image": "crevette.jpg",
+          "max": 10
+        },
+        {
+          "id": "maquereau",
+          "code": "35",
+          "name": "Maquereau (2 pièces)",
+          "image": "maquereau.jpg",
+          "max": 10
+        }
+      ]
+    },
+    {
+      "id": "temaki",
+      "title": "Temaki",
+      "items": [
+        {
+          "id": "saumon_avocat",
+          "code": "36",
+          "name": "Saumon Avocat (1 pièce)",
+          "image": "saumon_avocat.jpg",
+          "max": 10
+        },
+        {
+          "id": "thon_avocat",
+          "code": "37",
+          "name": "Thon Avocat (1 pièce)",
+          "image": "thon_avocat.jpg",
+          "max": 10
+        },
+        {
+          "id": "surimi_avocat",
+          "code": "38",
+          "name": "Surimi Avocat (1 pièce)",
+          "image": "surimi_avocat.jpg",
+          "max": 10
+        },
+        {
+          "id": "concombre_avocat",
+          "code": "39",
+          "name": "Concombre Avocat (1 pièce)",
+          "image": "concombre_avocat.jpg",
+          "max": 10
+        }
+      ]
+    },
+    {
+      "id": "maki_california",
+      "title": "Maki & California",
+      "items": [
+        {
+          "id": "maki_saumon",
+          "code": "41",
+          "name": "Maki Saumon (4 pièces)",
+          "image": "maki_saumon.jpg",
+          "max": 10
+        },
+        {
+          "id": "maki_thon",
+          "code": "42",
+          "name": "Maki Thon (4 pièces)",
+          "image": "maki_thon.jpg",
+          "max": 10
+        },
+        {
+          "id": "maki_avocat",
+          "code": "43",
+          "name": "Maki Avocat (4 pièces)",
+          "image": "maki_avocat.jpg",
+          "max": 10
+        },
+        {
+          "id": "maki_radis_sale",
+          "code": "44",
+          "name": "Maki Radis Salé (4 pièces)",
+          "image": "maki_radis_sale.jpg",
+          "max": 10
+        },
+        {
+          "id": "maki_concombre",
+          "code": "45",
+          "name": "Maki Concombre (4 pièces)",
+          "image": "maki_concombre.jpg",
+          "max": 10
+        },
+        {
+          "id": "maki_crevette",
+          "code": "46",
+          "name": "Maki Crevette (4 pièces)",
+          "image": "maki_crevette.jpg",
+          "max": 10
+        },
+        {
+          "id": "maki_fromage_fondu",
+          "code": "47",
+          "name": "Maki Fromage Fondu (4 pièces)",
+          "image": "maki_fromage_fondu.jpg",
+          "max": 10
+        },
+        {
+          "id": "california_saumon_avocat",
+          "code": "51",
+          "name": "California Saumon Avocat (4 pièces)",
+          "image": "california_saumon_avocat.jpg",
+          "max": 10
+        },
+        {
+          "id": "california_thon_mayo_avocat",
+          "code": "52",
+          "name": "California Thon Cuit Mayonnaise Avocat (4 pièces)",
+          "image": "california_thon_cuit_mayonnaise_avocat.jpg",
+          "max": 10
+        },
+        {
+          "id": "california_surimi_avocat",
+          "code": "53",
+          "name": "California Surimi Avocat (4 pièces)",
+          "image": "california_surimi_avocat.jpg",
+          "max": 10
+        },
+        {
+          "id": "california_crevette_avocat",
+          "code": "54",
+          "name": "California Crevette Avocat (4 pièces)",
+          "image": "california_crevette_avocat.jpg",
+          "max": 10
+        },
+        {
+          "id": "california_saumon_avocat_fromage",
+          "code": "55",
+          "name": "California Saumon Avocat Fromage (4 pièces)",
+          "image": "california_saumon_avocat_fromage.jpg",
+          "max": 10
+        },
+        {
+          "id": "california_saumon_avocat_crispy",
+          "code": "56",
+          "name": "California Saumon Avocat Crispy (4 pièces)",
+          "image": "california_saumon_avocat_crispy.jpg",
+          "max": 10
+        },
+        {
+          "id": "california_surimi_frit",
+          "code": "57",
+          "name": "California Surimi Avocat Frit (4 pièces)",
+          "image": "california_surimi_avocat_frit.jpg",
+          "max": 10
+        },
+        {
+          "id": "california_fromage_avocat",
+          "code": "59",
+          "name": "California Fromage Avocat (4 pièces)",
+          "image": "california_fromage_avocat.jpg",
+          "max": 10
+        }
+      ]
+    },
+    {
+      "id": "desserts",
+      "title": "Desserts",
+      "items": [
+        {
+          "id": "lychee",
+          "code": null,
+          "name": "Lychee",
+          "image": "lychee.jpg",
+          "max": 10
+        },
+        {
+          "id": "nougat",
+          "code": null,
+          "name": "Nougat",
+          "image": "nougat.jpg",
+          "max": 10
+        },
+        {
+          "id": "perle_coco",
+          "code": null,
+          "name": "Perle de coco au beurre de cacahuète (1 pièce)",
+          "image": "perle_coco.jpg",
+          "max": 10
+        },
+        {
+          "id": "mochi_glace",
+          "code": null,
+          "name": "Mochi glacé (2 pièces)",
+          "image": "mochi_glace.jpg",
+          "max": 10,
+          "note": "+ 3,50€"
+        },
+        {
+          "id": "boule_glace",
+          "name": "Boule de glace",
+          "image": "boule_glace.jpg",
+          "max": 10,
+          "flavors": [
+            {
+              "id": "chocolat",
+              "label": "Chocolat"
+            },
+            {
+              "id": "vanille",
+              "label": "Vanille"
+            },
+            {
+              "id": "fraise",
+              "label": "Fraise"
+            },
+            {
+              "id": "citron",
+              "label": "Citron"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

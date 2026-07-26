@@ -1,0 +1,32 @@
+{
+  "seasons": [
+    {
+      "id": "sakura",
+      "label": "Sakura",
+      "bodyClass": null,
+      "css": "/css/seasons/sakura.css",
+      "effect": "/js/effects/sakura.js",
+      "logo": null,
+      "toggle": true,
+      "toggleLabel": "Activer les pétales",
+      "reducedMotionDisablesEffect": true,
+      "windows": [
+        { "start": "03-25", "end": "04-30" },
+        { "start": "05-01", "end": "05-10" }
+      ]
+    },
+    {
+      "id": "halloween",
+      "label": "Halloween",
+      "bodyClass": "halloween",
+      "css": "/css/seasons/halloween.css",
+      "effect": "/js/effects/halloween.js",
+      "logo": "/assets/logo_white.png",
+      "toggle": false,
+      "reducedMotionDisablesEffect": true,
+      "windows": [
+        { "start": "10-10", "end": "11-10" }
+      ]
+    }
+  ]
+}

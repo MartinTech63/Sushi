@@ -1,0 +1,13 @@
+.hintrc
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+data/
+*.db
+*.db-*
+*.zip
+SOURCES/
+.DS_Store
+Thumbs.db

@@ -4,14 +4,32 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: sushi:latest
     ports:
-      - "8000:8000"
+      - "${PORT:-8000}:8000"
     volumes:
       - sushi-data:/data
     environment:
       DATABASE_URL: /data/sushi.db
+      PORT: "8000"
+      MAX_CLIENTS_PER_TABLE: "${MAX_CLIENTS_PER_TABLE:-20}"
+      MAX_ITEMS_PER_ORDER: "${MAX_ITEMS_PER_ORDER:-50}"
+      WS_MAX_MESSAGES_PER_MIN: "${WS_MAX_MESSAGES_PER_MIN:-120}"
+      WS_CONNECT_LIMIT: "${WS_CONNECT_LIMIT:-60}"
+      WS_CONNECT_WINDOW_SECONDS: "${WS_CONNECT_WINDOW_SECONDS:-60}"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
     restart: unless-stopped
 
 volumes:
   sushi-data:
-
