@@ -1027,7 +1027,35 @@ nav a { float: none; }
   margin: 0 0 14px;
   color: #666;
   font-size: 0.92rem;
-  line-height: 1.35;
+  line-height: 1.45;
+}
+
+.table-help p {
+  margin: 0;
+}
+
+.table-howto {
+  margin: 10px 0;
+  padding-left: 1.2em;
+  color: #555;
+}
+
+.table-howto li {
+  margin: 0 0 6px;
+}
+
+.table-howto li:last-child {
+  margin-bottom: 0;
+}
+
+.table-ttl {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--matcha-soft, #eef8f1);
+  border: 1px solid #d5eadc;
+  color: #3a5a44;
+  font-size: 0.88rem;
 }
 
 .table-field {

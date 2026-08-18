@@ -74,7 +74,15 @@
     <h2 class="table-panel-title">Table</h2>
 
     <div id="tableAuthBox" class="table-auth">
-      <p class="table-help">Même code = même table. Tu envoies ta commande avec <strong>Envoyer</strong> ; le total se met à jour tout seul.</p>
+      <div class="table-help">
+        <p>Une table rassemble les commandes du groupe. <strong>Même code = même table.</strong></p>
+        <ol class="table-howto">
+          <li>Choisis un pseudo. Laisse le code vide pour <strong>créer</strong>, ou saisis-le pour <strong>rejoindre</strong>.</li>
+          <li>Compose ta commande dans l’onglet <strong>Carte</strong>.</li>
+          <li>Appuie sur <strong>Envoyer</strong> : le total commun se met à jour tout seul chez tout le monde.</li>
+        </ol>
+        <p class="table-ttl">La table reste valide <strong>3 heures</strong> après sa création, puis elle est supprimée (le code peut être réutilisé).</p>
+      </div>
 
       <label class="table-field">
         <span>Pseudo</span>
@@ -108,7 +116,7 @@
 
       <div class="table-send-row">
         <button type="button" id="submitOrderBtn" class="popup-btn table-btn">Envoyer ma commande</button>
-        <p class="table-send-note">L’envoi est manuel. La liste ci-dessous se rafraîchit toute seule.</p>
+        <p class="table-send-note">L’envoi est manuel. La liste ci-dessous se rafraîchit toute seule. Valable <strong>3 h</strong> après la création de la table.</p>
       </div>
 
       <section class="table-section">
