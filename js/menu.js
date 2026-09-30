@@ -14,18 +14,52 @@
   }
 
   function itemLabel(item) {
-    var label = item.code ? item.code + ' | ' + item.name : item.name;
+    var titlePrefix = item.code ? escapeHtml(item.code) + ' | ' : '';
+    var raw = String(item.name || '');
+    var match = raw.match(/^(.*?)(\s*\([^)]+\))\s*$/);
+    var titleText;
+    var qtyHtml = '';
+
+    if (match && match[1]) {
+      titleText = titlePrefix + escapeHtml(match[1].trim());
+      qtyHtml =
+        '<span class="menu-item-qty-note">' +
+        escapeHtml(match[2].trim()) +
+        '</span>';
+    } else {
+      titleText = titlePrefix + escapeHtml(raw);
+    }
+
+    var label =
+      '<span class="menu-item-title">' + titleText + '</span>' + qtyHtml;
     if (item.note) {
-      label += ' <span class="menu-item-note">' + escapeHtml(item.note) + '</span>';
+      label +=
+        '<span class="menu-item-note">' + escapeHtml(item.note) + '</span>';
     }
     return label;
+  }
+
+  function thumbButton(item) {
+    var fullLabel = item.code ? item.code + ' | ' + item.name : item.name;
+    if (item.note) fullLabel += ' ' + item.note;
+    return (
+      '<button type="button" class="menu-item-thumb" aria-label="Agrandir ' +
+      escapeHtml(fullLabel) +
+      '">' +
+      '<img src="/assets/' +
+      escapeHtml(item.image) +
+      '" alt="' +
+      escapeHtml(fullLabel) +
+      '" loading="lazy" width="72" height="72" />' +
+      '</button>'
+    );
   }
 
   function renderStandardItem(item) {
     return (
       '<article class="menu-item" data-item-id="' + escapeHtml(item.id) + '">' +
       '<div class="menu-item-main">' +
-      '<img src="/assets/' + escapeHtml(item.image) + '" alt="' + escapeHtml(item.name) + '" loading="lazy" width="72" height="72" />' +
+      thumbButton(item) +
       '<span class="menu-item-name">' + itemLabel(item) + '</span>' +
       '</div>' +
       '<div class="menu-item-actions">' +
@@ -56,7 +90,7 @@
     return (
       '<article class="menu-item menu-item--flavors" data-item-id="' + escapeHtml(item.id) + '">' +
       '<div class="menu-item-main">' +
-      '<img src="/assets/' + escapeHtml(item.image) + '" alt="' + escapeHtml(item.name) + '" loading="lazy" width="72" height="72" />' +
+      thumbButton(item) +
       '<span class="menu-item-name">' + escapeHtml(item.name) + '</span>' +
       '</div>' +
       '<div class="menu-item-flavors">' + flavors + '</div>' +

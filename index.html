@@ -15,6 +15,7 @@
   <script src="/js/menu.js" defer></script>
   <script src="/js/order.js" defer></script>
   <script src="/js/select-ui.js" defer></script>
+  <script src="/js/lightbox.js" defer></script>
   <script src="/js/popup.js" defer></script>
   <script src="/js/ui.js" defer></script>
   <script src="/js/share.js" defer></script>
@@ -140,6 +141,22 @@
   </div>
 
   <div id="toastHost" class="toast-host" aria-live="polite"></div>
+
+  <div
+    id="imageLightbox"
+    class="image-lightbox"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="imageLightboxCaption"
+    aria-hidden="true"
+    hidden
+  >
+    <button type="button" id="imageLightboxClose" class="image-lightbox-close" aria-label="Fermer">×</button>
+    <figure class="image-lightbox-figure">
+      <img id="imageLightboxImg" class="image-lightbox-img" alt="" />
+      <figcaption id="imageLightboxCaption" class="image-lightbox-caption"></figcaption>
+    </figure>
+  </div>
 
   <main id="menuRoot" class="menu-root" aria-live="polite">
     <p class="menu-loading">Chargement de la carte…</p>
