@@ -130,6 +130,139 @@
     });
   }
 
+  var LS_ORDER_DRAFT = 'sushi_order_draft';
+  var ORDER_DRAFT_TTL_MS = 4 * 60 * 60 * 1000; // aligné sur TTL table / popup
+  var orderDraftSaveTimer = null;
+  var orderDraftBound = false;
+  var restoringOrderDraft = false;
+
+  function collectOrderDraft() {
+    var items = {};
+    document.querySelectorAll('.menu-item input[type="number"]').forEach(function (qty) {
+      var key = qty.name || qty.id;
+      if (!key) return;
+      var v = parseInt(qty.value, 10) || 0;
+      if (v > 0) items[key] = v;
+    });
+    return items;
+  }
+
+  function clearOrderDraft() {
+    try {
+      localStorage.removeItem(LS_ORDER_DRAFT);
+    } catch (e) {}
+  }
+
+  function saveOrderDraft() {
+    if (restoringOrderDraft) return;
+    try {
+      var items = collectOrderDraft();
+      if (!Object.keys(items).length) {
+        clearOrderDraft();
+        return;
+      }
+      localStorage.setItem(
+        LS_ORDER_DRAFT,
+        JSON.stringify({
+          expiresAt: new Date(Date.now() + ORDER_DRAFT_TTL_MS).toISOString(),
+          items: items
+        })
+      );
+    } catch (e) {}
+  }
+
+  function scheduleSaveOrderDraft() {
+    if (restoringOrderDraft) return;
+    if (orderDraftSaveTimer) clearTimeout(orderDraftSaveTimer);
+    orderDraftSaveTimer = setTimeout(saveOrderDraft, 120);
+  }
+
+  function loadOrderDraft() {
+    try {
+      var raw = localStorage.getItem(LS_ORDER_DRAFT);
+      if (!raw) return null;
+      var data = JSON.parse(raw);
+      if (!data || !data.items || !data.expiresAt) {
+        clearOrderDraft();
+        return null;
+      }
+      var t = Date.parse(data.expiresAt);
+      if (Number.isNaN(t) || Date.now() >= t) {
+        clearOrderDraft();
+        return null;
+      }
+      return data.items;
+    } catch (e) {
+      clearOrderDraft();
+      return null;
+    }
+  }
+
+  function applyOrderDraft(items) {
+    if (!items) return;
+    restoringOrderDraft = true;
+    try {
+      var restored = false;
+      document.querySelectorAll('.menu-item input[type="number"]').forEach(function (qty) {
+        var key = qty.name || qty.id;
+        if (!key || !Object.prototype.hasOwnProperty.call(items, key)) return;
+        var v = parseInt(items[key], 10) || 0;
+        if (v < 0) v = 0;
+        qty.value = String(v);
+        qty.dispatchEvent(new Event('input', { bubbles: true }));
+        qty.dispatchEvent(new Event('change', { bubbles: true }));
+        restored = true;
+      });
+      if (restored && typeof window.__forceSelectionUISync === 'function') {
+        window.__forceSelectionUISync();
+      }
+    } finally {
+      restoringOrderDraft = false;
+    }
+  }
+
+  function ensureOrderDraftPersistence() {
+    if (orderDraftBound) return;
+    orderDraftBound = true;
+    var root = document.getElementById('menuRoot') || document;
+    root.addEventListener(
+      'change',
+      function (e) {
+        var t = e.target;
+        if (!t || !t.matches) return;
+        if (t.matches('input[type="number"]') || t.matches('input[type="checkbox"]')) {
+          scheduleSaveOrderDraft();
+        }
+      },
+      true
+    );
+    root.addEventListener(
+      'input',
+      function (e) {
+        var t = e.target;
+        if (!t || !t.matches) return;
+        if (t.matches('input[type="number"]')) {
+          scheduleSaveOrderDraft();
+        }
+      },
+      true
+    );
+    // Clics sur +/- / Ajouter : capture aussi après coup.
+    root.addEventListener(
+      'click',
+      function (e) {
+        var t = e.target;
+        if (!t || !t.closest) return;
+        if (t.closest('.quantity-btn') || t.closest('.select-btn')) {
+          scheduleSaveOrderDraft();
+        }
+      },
+      true
+    );
+  }
+
+  window.__clearOrderDraft = clearOrderDraft;
+
   function bindOrderControls() {
     document.querySelectorAll('.menu-item input[type="checkbox"]').forEach(linkCheckbox);
     document.querySelectorAll('.menu-item input[type="number"]').forEach(linkNumber);
@@ -160,115 +293,11 @@
     });
 
     ensureOrderDraftPersistence();
-    // Après select-ui (même event menu-ready) : restaure la sélection sauvegardée.
+    // Laisse select-ui accrocher les pills, puis restaure la sélection.
     setTimeout(function () {
       applyOrderDraft(loadOrderDraft());
-    }, 0);
+    }, 50);
   }
-
-  var LS_ORDER_DRAFT = 'sushi_order_draft';
-  var ORDER_DRAFT_TTL_MS = 4 * 60 * 60 * 1000; // aligné sur TTL table / popup
-  var orderDraftSaveTimer = null;
-  var orderDraftBound = false;
-
-  function collectOrderDraft() {
-    var items = {};
-    document.querySelectorAll('.menu-item input[type="number"]').forEach(function (qty) {
-      var key = qty.name || qty.id;
-      if (!key) return;
-      var v = parseInt(qty.value, 10) || 0;
-      if (v > 0) items[key] = v;
-    });
-    return items;
-  }
-
-  function clearOrderDraft() {
-    try {
-      localStorage.removeItem(LS_ORDER_DRAFT);
-    } catch (e) {}
-  }
-
-  function saveOrderDraft() {
-    try {
-      var items = collectOrderDraft();
-      if (!Object.keys(items).length) {
-        clearOrderDraft();
-        return;
-      }
-      localStorage.setItem(
-        LS_ORDER_DRAFT,
-        JSON.stringify({
-          expiresAt: new Date(Date.now() + ORDER_DRAFT_TTL_MS).toISOString(),
-          items: items
-        })
-      );
-    } catch (e) {}
-  }
-
-  function scheduleSaveOrderDraft() {
-    if (orderDraftSaveTimer) clearTimeout(orderDraftSaveTimer);
-    orderDraftSaveTimer = setTimeout(saveOrderDraft, 120);
-  }
-
-  function loadOrderDraft() {
-    try {
-      var raw = localStorage.getItem(LS_ORDER_DRAFT);
-      if (!raw) return null;
-      var data = JSON.parse(raw);
-      if (!data || !data.items || !data.expiresAt) {
-        clearOrderDraft();
-        return null;
-      }
-      var t = Date.parse(data.expiresAt);
-      if (Number.isNaN(t) || Date.now() >= t) {
-        clearOrderDraft();
-        return null;
-      }
-      return data.items;
-    } catch (e) {
-      clearOrderDraft();
-      return null;
-    }
-  }
-
-  function applyOrderDraft(items) {
-    if (!items) return;
-    var restored = false;
-    document.querySelectorAll('.menu-item input[type="number"]').forEach(function (qty) {
-      var key = qty.name || qty.id;
-      if (!key || !Object.prototype.hasOwnProperty.call(items, key)) return;
-      var v = parseInt(items[key], 10) || 0;
-      if (v < 0) v = 0;
-      qty.value = v;
-      qty.dispatchEvent(new Event('input', { bubbles: true }));
-      restored = true;
-    });
-    if (restored && typeof window.__forceSelectionUISync === 'function') {
-      window.__forceSelectionUISync();
-    }
-  }
-
-  function ensureOrderDraftPersistence() {
-    if (orderDraftBound) return;
-    orderDraftBound = true;
-    var root = document.getElementById('menuRoot') || document;
-    root.addEventListener('change', function (e) {
-      var t = e.target;
-      if (!t) return;
-      if (t.matches && (t.matches('input[type="number"]') || t.matches('input[type="checkbox"]'))) {
-        scheduleSaveOrderDraft();
-      }
-    });
-    root.addEventListener('input', function (e) {
-      var t = e.target;
-      if (!t) return;
-      if (t.matches && t.matches('input[type="number"]')) {
-        scheduleSaveOrderDraft();
-      }
-    });
-  }
-
-  window.__clearOrderDraft = clearOrderDraft;
 
   document.addEventListener('sushi:menu-ready', bindOrderControls);
   document.addEventListener('DOMContentLoaded', function () {

@@ -90,17 +90,13 @@
   'use strict';
 
   function triggerUISync() {
-    // Met tous les nombres à 0 (au cas où) + notifie
+    // Rafraîchit uniquement l’UI (pills / sync checkbox) sans écraser les quantités.
     document.querySelectorAll('.menu-item input[type="number"]').forEach(n => {
-      if (n.value !== '0') n.value = 0;
       n.dispatchEvent(new Event('input', { bubbles: true }));
       n.dispatchEvent(new Event('change', { bubbles: true }));
     });
 
-    // Notifie les checkbox pour que le pill "Ajouter/Ajouté" se re-render
     document.querySelectorAll('.menu-item input[type="checkbox"]').forEach(cb => {
-      // On ne force pas l'état ici (le reset d'origine s'en charge),
-      // on se contente de déclencher le "change" pour rafraîchir l'UI.
       cb.dispatchEvent(new Event('change', { bubbles: true }));
     });
   }
