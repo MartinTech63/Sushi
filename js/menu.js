@@ -88,11 +88,11 @@
       var data = await res.json();
       var html = (data.categories || []).map(renderCategory).join('');
       root.innerHTML = '<div class="container menu-container">' + html + '</div>';
-      document.dispatchEvent(new CustomEvent('sushi:menu-ready'));
     } catch (e) {
       root.innerHTML = '<p class="menu-load-error">Impossible de charger la carte.</p>';
       console.error(e);
     }
+    document.dispatchEvent(new CustomEvent('sushi:menu-ready'));
   }
 
   if (document.readyState === 'loading') {

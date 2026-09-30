@@ -3,8 +3,39 @@
 
   var popup = null;
   var previousActiveElement = null;
+  var LS_DISMISS_UNTIL = "sushi_popup_dismiss_until";
+  // Aligné sur le TTL table (3h) : après fermeture, ne plus réafficher pendant 3h.
+  var POPUP_TTL_MS = 3 * 60 * 60 * 1000;
 
   var FOCUSABLE = "button, [href], input, select, textarea, [tabindex]:not([tabindex=\"-1\"])";
+
+  function shouldShowPopup() {
+    try {
+      var raw = localStorage.getItem(LS_DISMISS_UNTIL);
+      if (!raw) return true;
+      var until = Date.parse(raw);
+      if (Number.isNaN(until)) {
+        localStorage.removeItem(LS_DISMISS_UNTIL);
+        return true;
+      }
+      if (Date.now() >= until) {
+        localStorage.removeItem(LS_DISMISS_UNTIL);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  function rememberPopupDismissed() {
+    try {
+      localStorage.setItem(
+        LS_DISMISS_UNTIL,
+        new Date(Date.now() + POPUP_TTL_MS).toISOString()
+      );
+    } catch (e) {}
+  }
 
   function getFocusables(container) {
     if (!container) return [];
@@ -66,6 +97,7 @@
     if (!popup) popup = document.getElementById("popupOverlay");
     if (!popup) return;
 
+    rememberPopupDismissed();
     popup.classList.remove("show");
     popup.setAttribute("aria-hidden", "true");
     document.body.classList.remove("noscroll");
@@ -82,7 +114,7 @@
   window.closePopup = closePopup;
 
   window.addEventListener("load", function () {
-    openPopup();
+    if (shouldShowPopup()) openPopup();
   });
 
   document.addEventListener("keydown", function (e) {

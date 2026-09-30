@@ -4,6 +4,9 @@
   const LS_TABLE_CODE = 'sushi_table_code';
   const LS_CLIENT_TOKEN = 'sushi_client_token';
   const LS_NICKNAME = 'sushi_nickname';
+  const LS_EXPIRES_AT = 'sushi_table_expires_at';
+  // Aligné sur TABLE_TTL_SECONDS côté serveur (3h).
+  const SESSION_TTL_MS = 3 * 60 * 60 * 1000;
 
   function $(id) {
     return document.getElementById(id);
@@ -28,25 +31,61 @@
     return {
       tableCode: localStorage.getItem(LS_TABLE_CODE),
       clientToken: localStorage.getItem(LS_CLIENT_TOKEN),
-      nickname: localStorage.getItem(LS_NICKNAME)
+      nickname: localStorage.getItem(LS_NICKNAME),
+      expiresAt: localStorage.getItem(LS_EXPIRES_AT)
     };
+  }
+
+  function defaultExpiresAtIso() {
+    return new Date(Date.now() + SESSION_TTL_MS).toISOString();
+  }
+
+  function isSessionExpired(session) {
+    // Anciennes sessions sans TTL → considérées expirées (évite les tables fantômes).
+    if (!session || !session.expiresAt) return true;
+    const t = Date.parse(session.expiresAt);
+    if (Number.isNaN(t)) return true;
+    return Date.now() >= t;
   }
 
   function setSession(data) {
     localStorage.setItem(LS_TABLE_CODE, data.tableCode);
     localStorage.setItem(LS_CLIENT_TOKEN, data.clientToken);
     localStorage.setItem(LS_NICKNAME, data.nickname);
+    localStorage.setItem(LS_EXPIRES_AT, data.expiresAt || defaultExpiresAtIso());
   }
 
   function clearSession() {
     localStorage.removeItem(LS_TABLE_CODE);
     localStorage.removeItem(LS_CLIENT_TOKEN);
     localStorage.removeItem(LS_NICKNAME);
+    localStorage.removeItem(LS_EXPIRES_AT);
   }
 
   function hasSession() {
     const s = getSession();
-    return !!(s.tableCode && s.clientToken);
+    if (!(s.tableCode && s.clientToken)) return false;
+    if (isSessionExpired(s)) {
+      clearSession();
+      return false;
+    }
+    return true;
+  }
+
+  function resetLiveUI(statusText) {
+    const authBox = $('tableAuthBox');
+    const liveBox = $('tableLiveBox');
+    if (authBox) authBox.hidden = false;
+    if (liveBox) liveBox.hidden = true;
+    setLiveStatus(statusText || 'Aucune table active.');
+    updateStickyBar();
+  }
+
+  function handleTableGone(message) {
+    stopWS();
+    clearSession();
+    resetLiveUI('Aucune table active.');
+    toast(message || 'Table expirée', true);
   }
 
   function tableInviteUrl(tableCode) {
@@ -89,12 +128,12 @@
   let submitting = false;
 
   async function submitOrderToTable() {
-    const { tableCode, clientToken } = getSession();
-    if (!tableCode || !clientToken) {
+    if (!hasSession()) {
       toast('Rejoins d’abord une table.', true);
       setActiveTab('table');
       return;
     }
+    const { tableCode, clientToken } = getSession();
     if (typeof window.getCurrentOrderItems !== 'function') {
       toast('Commande pas prête.', true);
       return;
@@ -122,6 +161,10 @@
       });
 
       if (!res.ok) {
+        if (res.status === 404 || res.status === 403) {
+          handleTableGone('Table expirée ou introuvable');
+          return;
+        }
         const txt = await res.text().catch(function () { return ''; });
         let detail = txt;
         try {
@@ -159,8 +202,8 @@
     const codeEl = $('tableStickyCode');
     if (!bar) return;
 
-    const session = getSession();
-    const show = !!(session.tableCode && session.clientToken);
+    const show = hasSession();
+    const session = show ? getSession() : null;
     bar.hidden = !show;
     document.body.classList.toggle('has-table-sticky', show);
     if (show && codeEl) codeEl.textContent = session.tableCode;
@@ -291,6 +334,7 @@
 
   function scheduleReconnect(tableCode) {
     if (!reconnectEnabled || !tableCode) return;
+    if (!hasSession()) return;
     if (reconnectTimer) clearTimeout(reconnectTimer);
     const delay = nextReconnectDelayMs();
     const secs = Math.ceil(delay / 1000);
@@ -304,6 +348,7 @@
 
   function connectWS(tableCode) {
     if (!tableCode) return;
+    if (!hasSession()) return;
 
     if (
       ws &&
@@ -354,6 +399,10 @@
           applyLiveSummary(msg);
           setLiveStatus('Connecté · mise à jour auto');
         }
+        if (msg && msg.type === 'error' && msg.detail === 'table_not_found') {
+          handleTableGone('Table expirée ou introuvable');
+          return;
+        }
         if (msg && msg.type === 'error' && msg.detail === 'rate_limited') {
           setLiveStatus('Serveur saturé · pause…');
           setLivePill(false);
@@ -368,12 +417,18 @@
       setLivePill(false);
     };
 
-    socket.onclose = function () {
+    socket.onclose = function (event) {
       if (ws !== socket) return;
       cleanupHeartbeat();
       ws = null;
       setLivePill(false);
       if (intentionalClose || !reconnectEnabled) return;
+      // 4404 = table absente / expirée côté serveur.
+      if (event && event.code === 4404) {
+        handleTableGone('Table expirée ou introuvable');
+        return;
+      }
+      if (!hasSession()) return;
       const session = getSession();
       if (!session.tableCode) return;
       scheduleReconnect(session.tableCode);
@@ -395,22 +450,22 @@
   }
 
   function ensureWSForSession() {
-    const session = getSession();
-    if (!session.tableCode || !session.clientToken) {
+    if (!hasSession()) {
       stopWS();
       return;
     }
+    const session = getSession();
     reconnectEnabled = true;
     connectWS(session.tableCode);
   }
 
   function showLiveSessionUI() {
+    if (!hasSession()) return;
     const session = getSession();
     const codeText = $('tableCodeBadgeText');
     const nickText = $('tableNicknameBadgeText');
     const authBox = $('tableAuthBox');
     const liveBox = $('tableLiveBox');
-    if (!session.tableCode || !session.clientToken) return;
 
     if (codeText) codeText.textContent = session.tableCode;
     if (nickText) nickText.textContent = session.nickname || '-';
@@ -479,9 +534,8 @@
 
     const authBox = $('tableAuthBox');
     const liveBox = $('tableLiveBox');
-    const session = getSession();
 
-    if (!session.tableCode || !session.clientToken) {
+    if (!hasSession()) {
       if (authBox) authBox.hidden = false;
       if (liveBox) liveBox.hidden = true;
       setLiveStatus('Aucune table active.');
@@ -503,11 +557,11 @@
   }
 
   async function shareTable() {
-    const session = getSession();
-    if (!session.tableCode) {
+    if (!hasSession()) {
       toast('Aucune table active.', true);
       return;
     }
+    const session = getSession();
     const url = tableInviteUrl(session.tableCode);
     const text = `Rejoins ma table sushi : ${session.tableCode}`;
 
@@ -531,15 +585,7 @@
   function leaveTable() {
     stopWS();
     clearSession();
-
-    const panel = $('tableSummaryPanel');
-    const authBox = $('tableAuthBox');
-    const liveBox = $('tableLiveBox');
-    if (panel && currentTab !== 'table') panel.hidden = true;
-    if (authBox) authBox.hidden = false;
-    if (liveBox) liveBox.hidden = true;
-    setLiveStatus('Aucune table active.');
-    updateStickyBar();
+    resetLiveUI('Aucune table active.');
     toast('Table quittée');
   }
 
@@ -620,6 +666,9 @@
   document.addEventListener('DOMContentLoaded', function () {
     setupOverlay();
 
+    // Purge immédiate des sessions locales expirées / fantômes.
+    hasSession();
+
     (function setMenuOffset() {
       var nav = document.querySelector('nav.nav-bar');
       if (!nav) return;
@@ -667,6 +716,9 @@
         activeWsTableCode = null;
       } else if (hasSession()) {
         ensureWSForSession();
+      } else {
+        stopWS();
+        resetLiveUI('Aucune table active.');
       }
     });
 

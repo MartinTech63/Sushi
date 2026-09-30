@@ -159,6 +159,18 @@ async def resolve_table_id(conn: aiosqlite.Connection, code: str) -> Optional[in
     return int(row[0])
 
 
+async def get_table_expires_at(conn: aiosqlite.Connection, code: str) -> Optional[str]:
+    now = utc_now_iso()
+    cursor = await conn.execute(
+        "SELECT expires_at FROM tables WHERE code = ? AND expires_at IS NOT NULL AND expires_at > ?;",
+        (code, now),
+    )
+    row = await cursor.fetchone()
+    if not row or row[0] is None:
+        return None
+    return str(row[0])
+
+
 async def join_table(
     conn: aiosqlite.Connection,
     table_code: str,

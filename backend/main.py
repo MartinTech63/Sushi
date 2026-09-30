@@ -23,6 +23,7 @@ from .db import (
     create_table,
     generate_table_code,
     get_database_path,
+    get_table_expires_at,
     get_table_summary,
     init_db,
     join_table,
@@ -220,6 +221,7 @@ async def api_join_table(req: JoinTableRequest, request: Request) -> JoinTableRe
 
     client_token = secrets.token_urlsafe(32)
     table_code = validate_table_code_or_400(req.code)
+    expires_at: Optional[str] = None
 
     async with connect_db() as conn:
         try:
@@ -227,6 +229,7 @@ async def api_join_table(req: JoinTableRequest, request: Request) -> JoinTableRe
                 raise HTTPException(status_code=413, detail="nickname_too_large")
 
             await join_table(conn, table_code, client_token, req.nickname)
+            expires_at = await get_table_expires_at(conn, table_code)
             await conn.commit()
         except LookupError:
             raise HTTPException(status_code=404, detail="table_not_found")
@@ -235,8 +238,14 @@ async def api_join_table(req: JoinTableRequest, request: Request) -> JoinTableRe
         except PermissionError as e:
             raise HTTPException(status_code=403, detail=str(e) or "not_allowed")
 
+    if not expires_at:
+        raise HTTPException(status_code=404, detail="table_not_found")
+
     return JoinTableResponse(
-        tableCode=table_code, clientToken=client_token, nickname=req.nickname
+        tableCode=table_code,
+        clientToken=client_token,
+        nickname=req.nickname,
+        expiresAt=expires_at,
     )
 
 

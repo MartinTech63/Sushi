@@ -422,7 +422,8 @@ input[type="checkbox"] {
   left: 12px;
   right: 12px;
   bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-  z-index: 120;
+  /* Au-dessus de la barre sticky table (4500) pour garder Exporter cliquable */
+  z-index: 4600;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1063,12 +1064,21 @@ nav a { float: none; }
   margin: 0 0 12px;
 }
 
-.table-field span {
+.table-field > span:first-child {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
   color: #333;
   font-weight: 600;
   font-size: 0.92rem;
+}
+
+.table-field-hint {
+  display: block;
+  margin: 0 0 6px;
+  color: #777;
+  font-weight: 400;
+  font-size: 0.82rem;
+  line-height: 1.35;
 }
 
 .table-field input {

@@ -72,6 +72,13 @@ window.topFunction = topFunction;
 document.addEventListener('DOMContentLoaded', function () {
   adjustButtonPosition();
 
+  // Le menu est injecté en async : au 1er calcul le footer est encore
+  // dans le viewport et remonte les FAB. On recalcule quand la carte est prête.
+  document.addEventListener('sushi:menu-ready', function () {
+    requestAnimationFrame(adjustButtonPosition);
+  });
+  window.addEventListener('load', adjustButtonPosition);
+
   var logo = document.getElementById('mainLogo');
   if (logo) logo.addEventListener('click', playSound);
 

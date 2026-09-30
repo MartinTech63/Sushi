@@ -27,6 +27,7 @@ class JoinTableResponse(BaseModel):
     tableCode: str
     clientToken: str
     nickname: str
+    expiresAt: str
 
 
 class OrderItem(BaseModel):

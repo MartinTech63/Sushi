@@ -247,6 +247,67 @@ function getCurrentOrderItems() {
 }
 
 // --- generateOrderSummary() — même identité visuelle que l'UI ---
+var __orderLogoCache = Object.create(null);
+var __orderLogoImages = Object.create(null);
+
+function loadOrderLogo(src) {
+  if (__orderLogoCache[src]) return __orderLogoCache[src];
+
+  __orderLogoCache[src] = new Promise(function (resolve) {
+    var img = new Image();
+    var settled = false;
+    function done(value) {
+      if (settled) return;
+      settled = true;
+      if (value) __orderLogoImages[src] = value;
+      resolve(value);
+    }
+    function finishOk() {
+      if (img.naturalWidth) done(img);
+      else done(null);
+    }
+    img.onload = function () {
+      if (img.decode) {
+        img.decode().then(finishOk).catch(finishOk);
+      } else {
+        finishOk();
+      }
+    };
+    img.onerror = function () { done(null); };
+    img.src = src;
+  });
+
+  return __orderLogoCache[src];
+}
+
+function whenFontsReady(timeoutMs) {
+  if (!document.fonts || !document.fonts.ready) {
+    return Promise.resolve();
+  }
+  // Ne jamais bloquer indéfiniment si Google Fonts est lent / bloqué
+  return Promise.race([
+    document.fonts.ready.then(function () {}, function () {}),
+    new Promise(function (resolve) {
+      setTimeout(resolve, timeoutMs || 350);
+    })
+  ]);
+}
+
+function triggerPngDownload(dataUrl, filename) {
+  var link = document.createElement('a');
+  link.href = dataUrl;
+  link.download = filename;
+  link.rel = 'noopener';
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+
+// Précharge les logos pour que l’export reste synchrone au clic (geste utilisateur)
+loadOrderLogo('/assets/logo.png');
+loadOrderLogo('/assets/logo_white.png');
+
 function generateOrderSummary() {
   var groupedSummary = computeCurrentOrderSummary();
   if (!Object.keys(groupedSummary).length) {
@@ -255,6 +316,7 @@ function generateOrderSummary() {
   }
 
   var isHalloween = document.body.classList.contains('halloween');
+  var logoSrc = isHalloween ? '/assets/logo_white.png' : '/assets/logo.png';
   var colors = isHalloween
     ? {
         pageBg: '#111111',
@@ -279,6 +341,10 @@ function generateOrderSummary() {
 
   var canvas = document.createElement('canvas');
   var ctx = canvas.getContext('2d');
+  if (!ctx) {
+    alert("Impossible de générer l'image (canvas indisponible).");
+    return;
+  }
   var scale = 2;
   var width = 800;
   var pad = 28;
@@ -287,10 +353,6 @@ function generateOrderSummary() {
   var headerH = 96;
   var footerH = 64;
 
-  var totalRows = 0;
-  Object.keys(groupedSummary).forEach(function (cat) {
-    totalRows += 1 + groupedSummary[cat].length;
-  });
   var contentH = 24;
   Object.keys(groupedSummary).forEach(function (cat) {
     contentH += 40 + groupedSummary[cat].length * rowH + catGap;
@@ -299,7 +361,8 @@ function generateOrderSummary() {
 
   canvas.width = width * scale;
   canvas.height = height * scale;
-  ctx.scale(scale, scale);
+  // setTransform (pas scale cumulatif) : évite les PNG « étirés » si redraw
+  ctx.setTransform(scale, 0, 0, scale, 0, 0);
 
   var today = new Date();
   var date =
@@ -320,42 +383,73 @@ function generateOrderSummary() {
     ctx.closePath();
   }
 
+  // Arrondi uniquement en haut (header) — sans clip sur toute la carte
+  function fillTopRoundedRect(x, y, w, h, r) {
+    var rr = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x, y + h);
+    ctx.lineTo(x, y + rr);
+    ctx.arcTo(x, y, x + rr, y, rr);
+    ctx.lineTo(x + w - rr, y);
+    ctx.arcTo(x + w, y, x + w, y + rr, rr);
+    ctx.lineTo(x + w, y + h);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function fillBottomRoundedRect(x, y, w, h, r) {
+    var rr = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + w, y);
+    ctx.lineTo(x + w, y + h - rr);
+    ctx.arcTo(x + w, y + h, x + w - rr, y + h, rr);
+    ctx.lineTo(x + rr, y + h);
+    ctx.arcTo(x, y + h, x, y + h - rr, rr);
+    ctx.lineTo(x, y);
+    ctx.closePath();
+    ctx.fill();
+  }
+
   function drawAndDownload(logoImage) {
+    // Reset propre à chaque rendu
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.clearRect(0, 0, width, height);
+
     var cardX = 16;
     var cardY = 16;
     var cardW = width - 32;
     var cardH = height - 32;
     var footerY = cardY + cardH - footerH;
+    var radius = 8;
 
     // Fond page
     ctx.fillStyle = colors.pageBg;
     ctx.fillRect(0, 0, width, height);
 
-    // Carte + bordure
+    // Carte
     ctx.fillStyle = colors.cardBg;
-    roundRect(cardX, cardY, cardW, cardH, 8);
+    roundRect(cardX, cardY, cardW, cardH, radius);
     ctx.fill();
-    ctx.strokeStyle = colors.ink;
-    ctx.lineWidth = 2;
-    ctx.stroke();
 
-    // Header (haut de carte)
-    ctx.save();
-    ctx.beginPath();
-    roundRect(cardX, cardY, cardW, cardH, 8);
-    ctx.clip();
+    // Header arrondi en haut (PAS de clip global — cause des PNG vides / « striés »)
     ctx.fillStyle = colors.headerBg;
-    ctx.fillRect(cardX, cardY, cardW, headerH);
+    fillTopRoundedRect(cardX, cardY, cardW, headerH, radius);
     ctx.fillStyle = colors.ink;
     ctx.fillRect(cardX, cardY + headerH - 2, cardW, 2);
 
     // Logo
     var textLeft = cardX + 22;
-    if (logoImage && logoImage.width && logoImage.height) {
-      var logoH = 52;
-      var logoW = (logoImage.width / logoImage.height) * logoH;
-      ctx.drawImage(logoImage, cardX + 18, cardY + (headerH - logoH) / 2, logoW, logoH);
-      textLeft = cardX + 18 + logoW + 14;
+    if (logoImage && logoImage.naturalWidth && logoImage.naturalHeight) {
+      try {
+        var logoH = 52;
+        var logoW = (logoImage.naturalWidth / logoImage.naturalHeight) * logoH;
+        ctx.drawImage(logoImage, cardX + 18, cardY + (headerH - logoH) / 2, logoW, logoH);
+        textLeft = cardX + 18 + logoW + 14;
+      } catch (eLogo) {
+        console.warn('Logo export skip', eLogo);
+      }
     }
 
     // Titre brand + date
@@ -432,12 +526,17 @@ function generateOrderSummary() {
       y += catGap - 8;
     });
 
-    // Footer
+    // Footer arrondi en bas
     ctx.fillStyle = colors.headerBg;
-    ctx.fillRect(cardX, footerY, cardW, cardH - (footerY - cardY));
+    fillBottomRoundedRect(cardX, footerY, cardW, cardH - (footerY - cardY), radius);
     ctx.fillStyle = colors.ink;
     ctx.fillRect(cardX, footerY, cardW, 2);
-    ctx.restore();
+
+    // Bordure carte par-dessus
+    ctx.strokeStyle = colors.ink;
+    ctx.lineWidth = 2;
+    roundRect(cardX, cardY, cardW, cardH, radius);
+    ctx.stroke();
 
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
@@ -454,10 +553,7 @@ function generateOrderSummary() {
 
     try {
       var img = canvas.toDataURL('image/png');
-      var link = document.createElement('a');
-      link.href = img;
-      link.download = 'Liste de la commande du ' + date + '.png';
-      link.click();
+      triggerPngDownload(img, 'Liste de la commande du ' + date + '.png');
     } catch (e) {
       alert(
         "Impossible de générer l'image de la commande dans ce contexte.\n" +
@@ -467,22 +563,31 @@ function generateOrderSummary() {
     }
   }
 
-  function startDraw(logoImage) {
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(function () {
-        drawAndDownload(logoImage);
-      }).catch(function () {
-        drawAndDownload(logoImage);
-      });
-    } else {
-      drawAndDownload(logoImage);
+  function pickLogo() {
+    if (__orderLogoImages[logoSrc]) return __orderLogoImages[logoSrc];
+    // Logo déjà affiché dans la page = forcément décodé
+    var mainLogo = document.getElementById('mainLogo');
+    if (
+      mainLogo &&
+      mainLogo.complete &&
+      mainLogo.naturalWidth &&
+      mainLogo.currentSrc &&
+      mainLogo.currentSrc.indexOf(logoSrc) !== -1
+    ) {
+      return mainLogo;
     }
+    return null;
   }
 
-  var logo = new Image();
-  logo.onload = function () { startDraw(logo); };
-  logo.onerror = function () { startDraw(null); };
-  logo.src = isHalloween ? '/assets/logo_white.png' : '/assets/logo.png';
+  var readyLogo = pickLogo();
+  if (readyLogo) {
+    drawAndDownload(readyLogo);
+    return;
+  }
+
+  Promise.all([loadOrderLogo(logoSrc), whenFontsReady(350)]).then(function (results) {
+    drawAndDownload(results[0]);
+  });
 }
 
 window.getCurrentOrderItems = getCurrentOrderItems;
