@@ -564,12 +564,22 @@
       return;
     }
     const session = getSession();
-    const url = tableInviteUrl(session.tableCode);
-    const text = `Rejoins ma table sushi : ${session.tableCode}`;
+    const code = session.tableCode;
+    const url = tableInviteUrl(code);
+    const nick = (session.nickname || '').trim();
+    const who = nick ? nick : 'Moi';
+    const title = 'Manger des Sushis — Table ' + code;
+    const text =
+      who +
+      ' t’invite à commander ensemble sur Manger des Sushis 🍣\n\n' +
+      'Code de table : ' +
+      code +
+      '\n' +
+      'Ouvre le lien, choisis ton pseudo, puis rejoins avec ce code.';
 
     try {
       if (navigator.share) {
-        await navigator.share({ title: 'Table Sushi', text: text, url: url });
+        await navigator.share({ title: title, text: text, url: url });
         return;
       }
     } catch (e) {
@@ -577,10 +587,10 @@
     }
 
     try {
-      await navigator.clipboard.writeText(url);
-      toast('Lien copié');
+      await navigator.clipboard.writeText(text + '\n' + url);
+      toast('Invitation copiée');
     } catch (e) {
-      toast('Code : ' + session.tableCode);
+      toast('Code : ' + code);
     }
   }
 
