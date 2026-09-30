@@ -317,26 +317,39 @@ function generateOrderSummary() {
 
   var isHalloween = document.body.classList.contains('halloween');
   var logoSrc = isHalloween ? '/assets/logo_white.png' : '/assets/logo.png';
+  // Charte site (:root + halloween.css)
   var colors = isHalloween
     ? {
-        pageBg: '#111111',
-        cardBg: '#1a1a1a',
-        headerBg: '#ff6600',
+        pageBg: '#0a0a0a',
+        cardBg: '#141414',
+        headerBg: '#1a1a1a',
+        headerBg2: '#2a1608',
+        navBg: '#111111',
         ink: '#f4f0e6',
         muted: '#c8c0b4',
         accent: '#ff6600',
+        accentSoft: '#ff9f1c',
         line: '#333333',
-        qtyBg: '#2a2a2a'
+        qtyBg: '#1b1b1b',
+        qtyInk: '#ffd8a8',
+        onAccent: '#ffffff',
+        border: '#3a1a0f'
       }
     : {
         pageBg: '#f5f2ec',
         cardBg: '#ffffff',
         headerBg: '#ff9800',
+        headerBg2: '#e68900',
+        navBg: '#2b2620',
         ink: '#1c1917',
         muted: '#5c564e',
         accent: '#ff9800',
+        accentSoft: '#fff3e0',
         line: '#ddd6cb',
-        qtyBg: '#f5f2ec'
+        qtyBg: '#fff3e0',
+        qtyInk: '#1c1917',
+        onAccent: '#ffffff',
+        border: '#1c1917'
       };
 
   var canvas = document.createElement('canvas');
@@ -348,20 +361,22 @@ function generateOrderSummary() {
   var scale = 2;
   var width = 800;
   var pad = 28;
-  var rowH = 36;
-  var catGap = 22;
-  var headerH = 96;
-  var footerH = 64;
+  var rowH = 44;
+  var catGap = 18;
+  var headerH = 108;
+  var navH = 36;
+  var footerH = 72;
+  var catTitleH = 48;
 
-  var contentH = 24;
-  Object.keys(groupedSummary).forEach(function (cat) {
-    contentH += 40 + groupedSummary[cat].length * rowH + catGap;
+  var categories = Object.keys(groupedSummary);
+  var contentH = 20;
+  categories.forEach(function (cat) {
+    contentH += catTitleH + groupedSummary[cat].length * rowH + catGap;
   });
-  var height = headerH + contentH + footerH + 24;
+  var height = headerH + navH + contentH + footerH + 24;
 
   canvas.width = width * scale;
   canvas.height = height * scale;
-  // setTransform (pas scale cumulatif) : évite les PNG « étirés » si redraw
   ctx.setTransform(scale, 0, 0, scale, 0, 0);
 
   var today = new Date();
@@ -371,6 +386,13 @@ function generateOrderSummary() {
     String(today.getMonth() + 1).padStart(2, '0') +
     '.' +
     today.getFullYear();
+
+  var totalPieces = 0;
+  categories.forEach(function (cat) {
+    groupedSummary[cat].forEach(function (it) {
+      totalPieces += parseInt(it.quantity, 10) || 0;
+    });
+  });
 
   function roundRect(x, y, w, h, r) {
     var rr = Math.min(r, w / 2, h / 2);
@@ -383,7 +405,6 @@ function generateOrderSummary() {
     ctx.closePath();
   }
 
-  // Arrondi uniquement en haut (header) — sans clip sur toute la carte
   function fillTopRoundedRect(x, y, w, h, r) {
     var rr = Math.min(r, w / 2, h / 2);
     ctx.beginPath();
@@ -411,8 +432,19 @@ function generateOrderSummary() {
     ctx.fill();
   }
 
+  function paintHeaderGradient(x, y, w, h) {
+    if (isHalloween) {
+      var g = ctx.createLinearGradient(x, y, x + w, y + h);
+      g.addColorStop(0, colors.headerBg);
+      g.addColorStop(1, colors.headerBg2);
+      ctx.fillStyle = g;
+    } else {
+      ctx.fillStyle = colors.headerBg;
+    }
+    fillTopRoundedRect(x, y, w, h, 8);
+  }
+
   function drawAndDownload(logoImage) {
-    // Reset propre à chaque rendu
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
     ctx.globalAlpha = 1;
     ctx.clearRect(0, 0, width, height);
@@ -423,8 +455,10 @@ function generateOrderSummary() {
     var cardH = height - 32;
     var footerY = cardY + cardH - footerH;
     var radius = 8;
+    var innerL = cardX + pad;
+    var innerR = cardX + cardW - pad;
 
-    // Fond page
+    // Fond washi
     ctx.fillStyle = colors.pageBg;
     ctx.fillRect(0, 0, width, height);
 
@@ -433,122 +467,162 @@ function generateOrderSummary() {
     roundRect(cardX, cardY, cardW, cardH, radius);
     ctx.fill();
 
-    // Header arrondi en haut (PAS de clip global — cause des PNG vides / « striés »)
-    ctx.fillStyle = colors.headerBg;
-    fillTopRoundedRect(cardX, cardY, cardW, headerH, radius);
-    ctx.fillStyle = colors.ink;
+    // —— Header (comme .site-header) ——
+    paintHeaderGradient(cardX, cardY, cardW, headerH);
+    ctx.fillStyle = colors.border;
     ctx.fillRect(cardX, cardY + headerH - 2, cardW, 2);
 
-    // Logo
     var textLeft = cardX + 22;
     if (logoImage && logoImage.naturalWidth && logoImage.naturalHeight) {
       try {
-        var logoH = 52;
+        var logoH = 56;
         var logoW = (logoImage.naturalWidth / logoImage.naturalHeight) * logoH;
-        ctx.drawImage(logoImage, cardX + 18, cardY + (headerH - logoH) / 2, logoW, logoH);
-        textLeft = cardX + 18 + logoW + 14;
+        ctx.drawImage(logoImage, cardX + 20, cardY + (headerH - logoH) / 2, logoW, logoH);
+        textLeft = cardX + 20 + logoW + 14;
       } catch (eLogo) {
         console.warn('Logo export skip', eLogo);
       }
     }
 
-    // Titre brand + date
-    ctx.fillStyle = '#ffffff';
-    ctx.textBaseline = 'middle';
     ctx.textAlign = 'left';
-    ctx.font = '400 26px "Dela Gothic One", "Noto Sans JP", sans-serif';
-    ctx.fillText('Manger des Sushis', textLeft, cardY + headerH / 2 - 10);
-    ctx.font = '700 14px "Noto Sans JP", sans-serif';
-    ctx.fillText('Commande du ' + date, textLeft, cardY + headerH / 2 + 14);
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = isHalloween ? colors.accentSoft : 'rgba(255,255,255,0.88)';
+    ctx.font = '700 11px "Noto Sans JP", sans-serif';
+    ctx.fillText('HANAMI', textLeft, cardY + 34);
 
-    // Contenu
-    var y = cardY + headerH + 30;
-    var innerL = cardX + pad;
-    var innerR = cardX + cardW - pad;
+    ctx.fillStyle = isHalloween ? colors.accentSoft : colors.onAccent;
+    ctx.font = '400 28px "Dela Gothic One", "Noto Sans JP", sans-serif';
+    ctx.fillText('Manger des Sushis', textLeft, cardY + 62);
 
-    Object.keys(groupedSummary).forEach(function (category) {
-      ctx.fillStyle = colors.ink;
+    ctx.fillStyle = isHalloween ? 'rgba(255,183,71,0.85)' : 'rgba(255,255,255,0.9)';
+    ctx.font = '500 13px "Noto Sans JP", sans-serif';
+    ctx.fillText('Commande du ' + date, textLeft, cardY + 88);
+
+    // —— Bandeau nav (comme .nav-bar) ——
+    var navY = cardY + headerH;
+    ctx.fillStyle = colors.navBg;
+    ctx.fillRect(cardX, navY, cardW, navH);
+    ctx.fillStyle = colors.accent;
+    ctx.fillRect(cardX, navY + navH - 3, 120, 3);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 13px "Noto Sans JP", sans-serif';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Carte', innerL, navY + navH / 2);
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+    ctx.font = '500 12px "Noto Sans JP", sans-serif';
+    var piecesLabel =
+      totalPieces + ' pièce' + (totalPieces > 1 ? 's' : '');
+    ctx.fillText(piecesLabel, innerR, navY + navH / 2);
+    ctx.textAlign = 'left';
+
+    // —— Contenu (sections comme .menu-section) ——
+    var y = navY + navH + 28;
+
+    categories.forEach(function (category, catIdx) {
+      if (catIdx > 0) y += 6;
+
+      // Titre catégorie centré + soulignement shu
+      ctx.fillStyle = isHalloween ? colors.accentSoft : colors.ink;
       ctx.font = '400 22px "Dela Gothic One", "Noto Sans JP", sans-serif';
+      ctx.textAlign = 'center';
       ctx.textBaseline = 'alphabetic';
-      ctx.textAlign = 'left';
-      ctx.fillText(category, innerL, y);
+      ctx.fillText(category, cardX + cardW / 2, y);
 
-      y += 10;
+      var titleW = ctx.measureText(category).width;
+      var ruleY = y + 10;
       ctx.strokeStyle = colors.accent;
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(innerL, y);
-      ctx.lineTo(innerR, y);
+      ctx.moveTo(cardX + cardW / 2 - Math.max(titleW / 2, 40) - 8, ruleY);
+      ctx.lineTo(cardX + cardW / 2 + Math.max(titleW / 2, 40) + 8, ruleY);
       ctx.stroke();
-      y += 22;
+      ctx.textAlign = 'left';
+
+      y = ruleY + 22;
 
       groupedSummary[category].forEach(function (item, idx) {
+        var rowTop = y - 8;
+
         if (idx > 0) {
           ctx.strokeStyle = colors.line;
           ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.moveTo(innerL, y - 14);
-          ctx.lineTo(innerR, y - 14);
+          ctx.moveTo(innerL, rowTop);
+          ctx.lineTo(innerR, rowTop);
           ctx.stroke();
         }
 
         var qty = String(item.quantity);
-        ctx.font = '700 16px "Noto Sans JP", sans-serif';
+        ctx.font = '700 15px "Noto Sans JP", sans-serif';
         var qtyLabel = '×' + qty;
-        var qtyW = Math.max(44, ctx.measureText(qtyLabel).width + 16);
+        var qtyW = Math.max(48, ctx.measureText(qtyLabel).width + 20);
+        var qtyH = 28;
         var qtyX = innerR - qtyW;
-        var qtyY = y - 16;
+        var qtyY = y + 2;
 
+        // Badge quantité (shu-soft + bordure ink)
         ctx.fillStyle = colors.qtyBg;
-        roundRect(qtyX, qtyY, qtyW, 26, 6);
+        roundRect(qtyX, qtyY, qtyW, qtyH, 6);
         ctx.fill();
-        ctx.strokeStyle = colors.ink;
+        ctx.strokeStyle = colors.border;
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        ctx.fillStyle = colors.ink;
+        ctx.fillStyle = colors.qtyInk;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(qtyLabel, qtyX + qtyW / 2, qtyY + 13);
+        ctx.fillText(qtyLabel, qtyX + qtyW / 2, qtyY + qtyH / 2);
 
         ctx.textAlign = 'left';
+        ctx.fillStyle = isHalloween ? colors.qtyInk : colors.ink;
         ctx.font = '500 16px "Noto Sans JP", sans-serif';
-        var maxNameW = qtyX - innerL - 12;
+        var maxNameW = qtyX - innerL - 14;
         var name = String(item.name);
         while (ctx.measureText(name).width > maxNameW && name.length > 3) {
           name = name.slice(0, -2) + '…';
         }
-        ctx.fillText(name, innerL, y - 3);
+        ctx.textBaseline = 'middle';
+        ctx.fillText(name, innerL, qtyY + qtyH / 2);
 
         y += rowH;
       });
 
-      y += catGap - 8;
+      y += catGap;
     });
 
-    // Footer arrondi en bas
-    ctx.fillStyle = colors.headerBg;
+    // —— Footer (comme .site-footer) ——
+    if (isHalloween) {
+      var fg = ctx.createLinearGradient(cardX, footerY, cardX + cardW, footerY + footerH);
+      fg.addColorStop(0, colors.headerBg);
+      fg.addColorStop(1, colors.headerBg2);
+      ctx.fillStyle = fg;
+    } else {
+      ctx.fillStyle = colors.headerBg;
+    }
     fillBottomRoundedRect(cardX, footerY, cardW, cardH - (footerY - cardY), radius);
-    ctx.fillStyle = colors.ink;
+    ctx.fillStyle = colors.border;
     ctx.fillRect(cardX, footerY, cardW, 2);
 
-    // Bordure carte par-dessus
-    ctx.strokeStyle = colors.ink;
+    ctx.strokeStyle = colors.border;
     ctx.lineWidth = 2;
     roundRect(cardX, cardY, cardW, cardH, radius);
     ctx.stroke();
 
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = isHalloween ? colors.accentSoft : colors.onAccent;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.font = '700 15px "Noto Sans JP", sans-serif';
     ctx.fillText(
       isHalloween ? 'Merci pour votre commande 👻' : 'Merci pour votre commande 🍨',
       width / 2,
-      footerY + 24
+      footerY + 26
     );
-    ctx.font = '500 13px "Noto Sans JP", sans-serif';
-    ctx.fillText('https://sushi.martintech.fr/', width / 2, footerY + 44);
+    ctx.fillStyle = isHalloween ? 'rgba(255,183,71,0.8)' : 'rgba(255,255,255,0.92)';
+    ctx.font = '500 12px "Noto Sans JP", sans-serif';
+    ctx.fillText('https://sushi.martintech.fr/', width / 2, footerY + 50);
     ctx.textAlign = 'start';
 
     try {
@@ -565,7 +639,6 @@ function generateOrderSummary() {
 
   function pickLogo() {
     if (__orderLogoImages[logoSrc]) return __orderLogoImages[logoSrc];
-    // Logo déjà affiché dans la page = forcément décodé
     var mainLogo = document.getElementById('mainLogo');
     if (
       mainLogo &&

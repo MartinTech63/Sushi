@@ -12,7 +12,7 @@ import aiosqlite
 
 # SQLite file path (env name kept for compatibility with existing deploys).
 DEFAULT_DATABASE_PATH = "data/sushi.db"
-TABLE_TTL_SECONDS = 3 * 60 * 60  # 3h
+TABLE_TTL_SECONDS = 4 * 60 * 60  # 4h
 MAX_CLIENTS_PER_TABLE = int(os.getenv("MAX_CLIENTS_PER_TABLE", "20"))
 MAX_ITEMS_PER_ORDER = int(os.getenv("MAX_ITEMS_PER_ORDER", "50"))
 MAX_ITEMS_JSON_BYTES = int(os.getenv("MAX_ITEMS_JSON_BYTES", "20000"))
@@ -98,7 +98,7 @@ async def init_db() -> None:
         if not has_expires_at:
             await db.execute("ALTER TABLE tables ADD COLUMN expires_at TEXT;")
 
-        # Met à jour les expires_at manquants avec created_at + 3h.
+        # Met à jour les expires_at manquants avec created_at + 4h.
         cursor = await db.execute(
             """
             SELECT id, created_at

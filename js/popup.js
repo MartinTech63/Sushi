@@ -4,8 +4,8 @@
   var popup = null;
   var previousActiveElement = null;
   var LS_DISMISS_UNTIL = "sushi_popup_dismiss_until";
-  // Aligné sur le TTL table (3h) : après fermeture, ne plus réafficher pendant 3h.
-  var POPUP_TTL_MS = 3 * 60 * 60 * 1000;
+  // Aligné sur le TTL table (4h) : après fermeture, ne plus réafficher pendant 4h.
+  var POPUP_TTL_MS = 4 * 60 * 60 * 1000;
 
   var FOCUSABLE = "button, [href], input, select, textarea, [tabindex]:not([tabindex=\"-1\"])";
 

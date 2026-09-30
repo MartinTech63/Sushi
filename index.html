@@ -75,29 +75,27 @@
 
     <div id="tableAuthBox" class="table-auth">
       <div class="table-help">
-        <p>La <strong>table</strong> sert à commander ensemble : chacun compose sa sélection, puis tout le monde voit le <strong>total commun</strong> et le détail <strong>par personne</strong>.</p>
-        <ol class="table-howto">
-          <li><strong>Pseudo</strong> — ton prénom (ou un surnom) affiché aux autres dans la liste « Par personne ». Choisis-en un différent pour chaque convive.</li>
-          <li><strong>Code de table</strong> — le « mot de passe » partagé du groupe. Une personne <strong>crée</strong> la table (code vide = code généré, ou code inventé). Les autres <strong>rejoignent</strong> en saisissant <strong>exactement le même code</strong>.</li>
-          <li>Ensuite : onglet <strong>Carte</strong> → choisis tes plats → <strong>Envoyer</strong>. Le total se met à jour tout seul chez tout le monde.</li>
-        </ol>
-        <p class="table-ttl">Une table expire automatiquement après <strong>3 heures</strong>. Plus besoin de la quitter : au prochain repas, créez-en une nouvelle.</p>
+        <p>Pour commander à plusieurs et voir le <strong>total commun</strong>.</p>
+        <ul class="table-howto">
+          <li><strong>Pseudo</strong> — ton nom affiché aux autres (ex. Alice).</li>
+          <li><strong>Code</strong> — partagé par le groupe. Une personne crée (vide ou inventé), les autres rejoignent avec le même code.</li>
+          <li>Puis : <strong>Carte</strong> → plats → <strong>Envoyer</strong>.</li>
+        </ul>
+        <p class="table-ttl">La table expire après <strong>4 h</strong>.</p>
       </div>
 
       <label class="table-field">
         <span>Pseudo</span>
-        <span class="table-field-hint">Comment les autres te verront dans le total du groupe</span>
         <input id="tableNicknameInput" type="text" maxlength="32" placeholder="Ex: Alice" autocomplete="nickname" />
       </label>
 
       <label class="table-field">
         <span>Code de table</span>
-        <span class="table-field-hint">Vide pour créer · saisi pour rejoindre la table d’un ami</span>
-        <input id="tableCodeInput" type="text" maxlength="16" placeholder="Ex: SUSH42" autocomplete="off" autocapitalize="characters" />
+        <input id="tableCodeInput" type="text" maxlength="16" placeholder="Vide = créer" autocomplete="off" autocapitalize="characters" />
       </label>
 
       <div class="table-actions">
-        <button type="button" id="createTableBtn" class="popup-btn table-btn">Créer une table</button>
+        <button type="button" id="createTableBtn" class="popup-btn table-btn">Créer</button>
         <button type="button" id="joinTableBtn" class="popup-btn table-btn">Rejoindre</button>
       </div>
     </div>
@@ -118,7 +116,7 @@
 
       <div class="table-send-row">
         <button type="button" id="submitOrderBtn" class="popup-btn table-btn">Envoyer ma commande</button>
-        <p class="table-send-note">Compose ta commande dans <strong>Carte</strong>, puis envoie-la ici. Le total ci-dessous se met à jour tout seul. La table expire après <strong>3 h</strong>.</p>
+        <p class="table-send-note">Compose dans <strong>Carte</strong>, puis envoie ici. Expire après <strong>4 h</strong>.</p>
       </div>
 
       <section class="table-section">
@@ -169,7 +167,7 @@
   </div>
 
   <footer class="site-footer">
-    <h2 class="site-footer-title">Fait avec le ❤️ — Martin Tech</h2>
+    <h2 class="site-footer-title">Fait avec le ❤️ | Martin Tech</h2>
     <h3 class="site-footer-version">
       <a id="footerVersionLink" href="https://github.com/MartinTech63/Sushi" target="_blank" rel="noopener noreferrer">Version</a>
     </h3>

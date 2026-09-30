@@ -5,8 +5,8 @@
   const LS_CLIENT_TOKEN = 'sushi_client_token';
   const LS_NICKNAME = 'sushi_nickname';
   const LS_EXPIRES_AT = 'sushi_table_expires_at';
-  // Aligné sur TABLE_TTL_SECONDS côté serveur (3h).
-  const SESSION_TTL_MS = 3 * 60 * 60 * 1000;
+  // Aligné sur TABLE_TTL_SECONDS côté serveur (4h).
+  const SESSION_TTL_MS = 4 * 60 * 60 * 1000;
 
   function $(id) {
     return document.getElementById(id);
@@ -480,7 +480,9 @@
   const resetBtn = $('resetBtn');
 
   function setMainMenuButtonsVisible(visible) {
+    var dock = $('fabDock');
     var actions = $('fabActions');
+    if (dock) dock.hidden = !visible;
     if (actions) actions.hidden = !visible;
     if (orderSummaryBtn) orderSummaryBtn.style.display = visible ? '' : 'none';
     if (resetBtn) resetBtn.style.display = visible ? '' : 'none';
