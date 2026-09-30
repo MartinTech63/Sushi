@@ -89,9 +89,9 @@
   }
 
   function tableInviteUrl(tableCode) {
-    const url = new URL(window.location.href);
+    // URL propre (origine + chemin) : mieux gérée au partage mobile que href complet + hash.
+    const url = new URL(window.location.origin + window.location.pathname);
     url.searchParams.set('table', tableCode);
-    url.hash = 'table';
     return url.toString();
   }
 
@@ -568,18 +568,21 @@
     const url = tableInviteUrl(code);
     const nick = (session.nickname || '').trim();
     const who = nick ? nick : 'Moi';
-    const title = 'Manger des Sushis — Table ' + code;
-    const text =
+    // Message complet + lien dans le même bloc.
+    // Sur téléphone (WhatsApp, Messages…), passer text ET url séparément
+    // fait souvent perdre le texte custom : on n’envoie que `text`.
+    const message =
       who +
       ' t’invite à commander ensemble sur Manger des Sushis 🍣\n\n' +
       'Code de table : ' +
       code +
       '\n' +
-      'Ouvre le lien, choisis ton pseudo, puis rejoins avec ce code.';
+      'Ouvre le lien, choisis ton pseudo, puis rejoins avec ce code.\n\n' +
+      url;
 
     try {
       if (navigator.share) {
-        await navigator.share({ title: title, text: text, url: url });
+        await navigator.share({ text: message });
         return;
       }
     } catch (e) {
@@ -587,7 +590,7 @@
     }
 
     try {
-      await navigator.clipboard.writeText(text + '\n' + url);
+      await navigator.clipboard.writeText(message);
       toast('Invitation copiée');
     } catch (e) {
       toast('Code : ' + code);
