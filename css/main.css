@@ -1118,6 +1118,9 @@ nav a { float: none; }
   padding: 14px 16px 18px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   scroll-margin-top: 90px;
+  /* Au-dessus des effets saison (chauves-souris, pétales), comme .menu-section */
+  position: relative;
+  z-index: 1;
 }
 
 .table-panel[hidden],

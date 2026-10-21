@@ -97,9 +97,11 @@
   }
 
   function updateLogo(season) {
+    var src = season && season.logo ? season.logo : DEFAULT_LOGO;
     var logoEl = document.getElementById('mainLogo');
-    if (!logoEl) return;
-    logoEl.src = season && season.logo ? season.logo : DEFAULT_LOGO;
+    if (logoEl) logoEl.src = src;
+    var popupLogo = document.querySelector('.popup-logo');
+    if (popupLogo) popupLogo.src = src;
   }
 
   function renderToggle(season) {
@@ -194,13 +196,13 @@
       if (!active.some(function (s) { return s.logo; })) updateLogo(null);
 
       var logoEl = document.getElementById('mainLogo');
-      if (logoEl) {
+      if (logoEl || document.querySelector('.popup-logo')) {
         new MutationObserver(function () {
           var hallo = active.find(function (s) { return s.id === 'halloween'; });
           if (document.body.classList.contains('halloween') && hallo && hallo.logo) {
-            logoEl.src = hallo.logo;
+            updateLogo(hallo);
           } else if (!document.body.classList.contains('halloween')) {
-            logoEl.src = DEFAULT_LOGO;
+            updateLogo(null);
           }
         }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
       }
