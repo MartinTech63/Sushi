@@ -13,6 +13,13 @@
       .replaceAll('"', '&quot;');
   }
 
+  /** Nom stable envoyé à la table / export (indépendant du rendu CSS). */
+  function orderDisplayName(item) {
+    var name = item.code ? item.code + ' | ' + item.name : String(item.name || '');
+    if (item.note) name += ' ' + item.note;
+    return name;
+  }
+
   function itemLabel(item) {
     var titlePrefix = item.code ? escapeHtml(item.code) + ' | ' : '';
     var raw = String(item.name || '');
@@ -40,8 +47,7 @@
   }
 
   function thumbButton(item) {
-    var fullLabel = item.code ? item.code + ' | ' + item.name : item.name;
-    if (item.note) fullLabel += ' ' + item.note;
+    var fullLabel = orderDisplayName(item);
     return (
       '<button type="button" class="menu-item-thumb" aria-label="Agrandir ' +
       escapeHtml(fullLabel) +
@@ -57,7 +63,11 @@
 
   function renderStandardItem(item) {
     return (
-      '<article class="menu-item" data-item-id="' + escapeHtml(item.id) + '">' +
+      '<article class="menu-item" data-item-id="' +
+      escapeHtml(item.id) +
+      '" data-order-name="' +
+      escapeHtml(orderDisplayName(item)) +
+      '">' +
       '<div class="menu-item-main">' +
       thumbButton(item) +
       '<span class="menu-item-name">' + itemLabel(item) + '</span>' +
@@ -71,12 +81,16 @@
   }
 
   function renderFlavorItem(item) {
+    var baseName = String(item.name || '');
     var flavors = (item.flavors || [])
       .map(function (f) {
         var fid = item.id + '_' + f.id;
         var qid = 'quantity_' + fid;
+        var orderName = baseName + ' - ' + f.label;
         return (
-          '<div class="menu-item-flavor">' +
+          '<div class="menu-item-flavor" data-order-name="' +
+          escapeHtml(orderName) +
+          '">' +
           '<span class="menu-item-flavor-label">' + escapeHtml(f.label) + '</span>' +
           '<div class="menu-item-actions">' +
           '<input type="checkbox" name="' + escapeHtml(fid) + '" data-target="' + escapeHtml(qid) + '" />' +
@@ -88,7 +102,11 @@
       .join('');
 
     return (
-      '<article class="menu-item menu-item--flavors" data-item-id="' + escapeHtml(item.id) + '">' +
+      '<article class="menu-item menu-item--flavors" data-item-id="' +
+      escapeHtml(item.id) +
+      '" data-order-name="' +
+      escapeHtml(baseName) +
+      '">' +
       '<div class="menu-item-main">' +
       thumbButton(item) +
       '<span class="menu-item-name">' + escapeHtml(item.name) + '</span>' +

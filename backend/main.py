@@ -27,6 +27,7 @@ from .db import (
     get_table_summary,
     init_db,
     join_table,
+    normalize_item_name,
     upsert_order,
     utc_now_iso,
 )
@@ -272,7 +273,8 @@ async def api_submit_order(
 
     filtered_items: list[dict[str, Any]] = []
     for it in req.items:
-        name = (it.name or "").strip()
+        # Même normalisation que l'agrégation table (évite les doublons d'espace).
+        name = normalize_item_name(it.name or "")
         qty = int(it.quantity)
         if not name or qty <= 0:
             continue

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import secrets
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
@@ -9,6 +10,15 @@ from pathlib import Path
 from typing import Any, AsyncIterator, Dict, List, Optional, Tuple
 
 import aiosqlite
+
+# Homogénéise les libellés (ex. "Saumon(2 pièces)" vs "Saumon (2 pièces)").
+_RE_MULTI_SPACE = re.compile(r"\s+")
+_RE_SPACE_BEFORE_PAREN = re.compile(r"(\S)\(")
+
+
+def normalize_item_name(name: str) -> str:
+    s = _RE_MULTI_SPACE.sub(" ", str(name or "").strip())
+    return _RE_SPACE_BEFORE_PAREN.sub(r"\1 (", s)
 
 # SQLite file path (env name kept for compatibility with existing deploys).
 DEFAULT_DATABASE_PATH = "data/sushi.db"
@@ -288,7 +298,7 @@ async def get_table_summary(
         for it in items_list:
             if not isinstance(it, dict):
                 continue
-            name = str(it.get("name", "")).strip()
+            name = normalize_item_name(str(it.get("name", "")))
             qty = int(it.get("quantity", 0) or 0)
             if not name or qty <= 0:
                 continue

@@ -324,13 +324,33 @@ function resetOrder() {
 
 window.resetOrder = resetOrder;
 
+/** Normalise un libellé lu dans le DOM (fallback si data-order-name absent). */
+function normalizeOrderItemName(raw) {
+  return String(raw || '')
+    .replace(/\s+/g, ' ')
+    .replace(/(\S)\(/g, '$1 (')
+    .trim();
+}
+
+function readOrderItemName(el) {
+  if (!el) return '';
+  var fromData = el.getAttribute('data-order-name');
+  if (fromData) return normalizeOrderItemName(fromData);
+  var nameEl = el.querySelector('.menu-item-name');
+  return normalizeOrderItemName(
+    (nameEl && nameEl.textContent) || el.textContent || ''
+  );
+}
+
 function computeCurrentOrderSummary() {
   var groupedSummary = {};
 
   document.querySelectorAll('.menu-item').forEach(function(item) {
-    var itemName = item.querySelector('.menu-item-name')?.innerText || item.querySelector('span')?.innerText || '';
+    var itemName = readOrderItemName(item);
     var categoryElement = item.closest('.menu-section')?.querySelector('h2');
-    var category = categoryElement ? categoryElement.innerText : 'Autre';
+    var category = categoryElement
+      ? normalizeOrderItemName(categoryElement.textContent)
+      : 'Autre';
 
     if (!groupedSummary[category]) groupedSummary[category] = [];
 
@@ -338,14 +358,19 @@ function computeCurrentOrderSummary() {
     if (item.classList.contains('menu-item--flavors') || itemName === 'Boule de glace') {
       item.querySelectorAll('input[type="checkbox"]').forEach(function(flavorCheckbox) {
         if (flavorCheckbox.checked) {
-          var labelEl = flavorCheckbox.closest('.menu-item-flavor')?.querySelector('.menu-item-flavor-label');
-          var labelText = labelEl
-            ? labelEl.textContent.trim()
-            : (flavorCheckbox.parentElement.textContent.split(':')[0].trim());
+          var flavorRoot = flavorCheckbox.closest('.menu-item-flavor');
           var quantityInput = document.getElementById(flavorCheckbox.dataset.target);
           if (!quantityInput) return;
+          var flavorName = readOrderItemName(flavorRoot);
+          if (!flavorName) {
+            var labelEl = flavorRoot && flavorRoot.querySelector('.menu-item-flavor-label');
+            var labelText = labelEl
+              ? labelEl.textContent.trim()
+              : (flavorCheckbox.parentElement.textContent.split(':')[0].trim());
+            flavorName = normalizeOrderItemName(itemName + ' - ' + labelText);
+          }
           groupedSummary[category].push({
-            name: `Boule de glace - ${labelText}`,
+            name: flavorName,
             quantity: quantityInput.value
           });
         }
