@@ -275,6 +275,24 @@
     }, 25000);
   }
 
+  function renderItemsWithCategories(items, rowHtml, catTag) {
+    var tag = catTag || 'div';
+    var html = '';
+    var lastCat = null;
+    (items || []).forEach(function (it) {
+      var cat = (it && it.category ? String(it.category) : '').trim() || 'Autre';
+      if (cat !== lastCat) {
+        html +=
+          '<' + tag + ' class="table-cat-label">' +
+          escapeHtml(cat) +
+          '</' + tag + '>';
+        lastCat = cat;
+      }
+      html += rowHtml(it);
+    });
+    return html;
+  }
+
   function renderTableSummary(payload) {
     const itemsRoot = $('tableSummaryItems');
     const clientsRoot = $('tableSummaryClients');
@@ -287,12 +305,13 @@
     if (payload.items.length === 0) {
       html += '<div class="table-empty">Aucun plat pour le moment.</div>';
     } else {
-      payload.items.forEach(function (it) {
-        html +=
+      html += renderItemsWithCategories(payload.items, function (it) {
+        return (
           `<div class="table-row">` +
           `<span class="table-row-name">${escapeHtml(it.name)}</span>` +
           `<span class="table-row-qty">×${it.quantity}</span>` +
-          `</div>`;
+          `</div>`
+        );
       });
     }
     itemsRoot.innerHTML = html;
@@ -308,11 +327,13 @@
         const nickname = cl && cl.nickname ? String(cl.nickname) : '—';
         const items = Array.isArray(cl.items) ? cl.items : [];
         const qty = computeTotal(items);
-        const lis = items
-          .map(function (it) {
+        const lis = renderItemsWithCategories(
+          items,
+          function (it) {
             return `<li>${escapeHtml(it.name)} ×${it.quantity}</li>`;
-          })
-          .join('');
+          },
+          'li'
+        );
         return (
           `<article class="table-person">` +
           `<div class="table-person-head">` +

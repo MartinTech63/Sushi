@@ -294,6 +294,9 @@ body.halloween .table-row-name,
 body.halloween .table-person-name {
   color: #ffe0b8;
 }
+body.halloween .table-cat-label {
+  color: #ff9f1c;
+}
 body.halloween .table-live-pill {
   color: #ffd8a8;
   background: #2a1608;

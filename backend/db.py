@@ -15,7 +15,8 @@ import aiosqlite
 _RE_MULTI_SPACE = re.compile(r"\s+")
 _RE_SPACE_BEFORE_PAREN = re.compile(r"(\S)\(")
 
-_MENU_ORDER_CACHE: Optional[Dict[str, int]] = None
+# nom → { "order": int, "category": str }
+_MENU_META_CACHE: Optional[Dict[str, Dict[str, Any]]] = None
 _CONTENT_DIR = Path(__file__).resolve().parents[1] / "content"
 
 
@@ -35,24 +36,25 @@ def _order_display_name(item: Dict[str, Any]) -> str:
     return normalize_item_name(label)
 
 
-def get_menu_order_index() -> Dict[str, int]:
-    """Index nom-canonique → position sur la carte (menu.json)."""
-    global _MENU_ORDER_CACHE
-    if _MENU_ORDER_CACHE is not None:
-        return _MENU_ORDER_CACHE
+def get_menu_item_meta() -> Dict[str, Dict[str, Any]]:
+    """Index nom-canonique → {order, category} depuis menu.json."""
+    global _MENU_META_CACHE
+    if _MENU_META_CACHE is not None:
+        return _MENU_META_CACHE
 
-    order: Dict[str, int] = {}
+    meta: Dict[str, Dict[str, Any]] = {}
     menu_path = _CONTENT_DIR / "menu.json"
     try:
         data = json.loads(menu_path.read_text(encoding="utf-8"))
     except Exception:
-        _MENU_ORDER_CACHE = order
-        return order
+        _MENU_META_CACHE = meta
+        return meta
 
     idx = 0
     for cat in data.get("categories") or []:
         if not isinstance(cat, dict):
             continue
+        category = str(cat.get("title") or "").strip() or "Autre"
         for item in cat.get("items") or []:
             if not isinstance(item, dict):
                 continue
@@ -64,34 +66,37 @@ def get_menu_order_index() -> Dict[str, int]:
                         continue
                     label = str(flavor.get("label") or "")
                     key = normalize_item_name(f"{base} - {label}")
-                    if key and key not in order:
-                        order[key] = idx
+                    if key and key not in meta:
+                        meta[key] = {"order": idx, "category": category}
                         idx += 1
             else:
                 key = _order_display_name(item)
-                if key and key not in order:
-                    order[key] = idx
+                if key and key not in meta:
+                    meta[key] = {"order": idx, "category": category}
                     idx += 1
 
-    _MENU_ORDER_CACHE = order
-    return order
+    _MENU_META_CACHE = meta
+    return meta
 
 
 def sort_items_by_menu_order(
     items: Dict[str, int],
 ) -> List[Dict[str, Any]]:
-    menu_order = get_menu_order_index()
+    menu_meta = get_menu_item_meta()
     # Connus d'abord (ordre carte), inconnus ensuite (ordre d'apparition).
-    known: List[Tuple[int, str, int]] = []
-    unknown: List[Tuple[int, str, int]] = []
+    known: List[Tuple[int, str, int, str]] = []
+    unknown: List[Tuple[int, str, int, str]] = []
     for i, (name, qty) in enumerate(items.items()):
-        pos = menu_order.get(name)
-        if pos is None:
-            unknown.append((i, name, qty))
+        info = menu_meta.get(name)
+        if info is None:
+            unknown.append((i, name, qty, "Autre"))
         else:
-            known.append((pos, name, qty))
+            known.append((int(info["order"]), name, qty, str(info["category"])))
     known.sort(key=lambda t: t[0])
-    return [{"name": n, "quantity": q} for _, n, q in known + unknown]
+    return [
+        {"name": n, "quantity": q, "category": cat}
+        for _, n, q, cat in known + unknown
+    ]
 
 # SQLite file path (env name kept for compatibility with existing deploys).
 DEFAULT_DATABASE_PATH = "data/sushi.db"

@@ -43,6 +43,7 @@ class SubmitOrderRequest(BaseModel):
 class AggregatedItem(BaseModel):
     name: str
     quantity: int
+    category: Optional[str] = None
 
 
 class ClientSummary(BaseModel):

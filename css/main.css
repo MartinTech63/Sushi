@@ -1319,6 +1319,27 @@ nav a { float: none; }
   margin-bottom: 2px;
 }
 
+.table-cat-label {
+  margin: 6px 0 0;
+  padding: 0 2px;
+  color: var(--shu-deep, #e68900);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.table-summary-items .table-cat-label:first-of-type,
+.table-person-items .table-cat-label:first-child {
+  margin-top: 0;
+}
+
+.table-person-items .table-cat-label {
+  list-style: none;
+  margin-left: -18px;
+  margin-top: 8px;
+}
+
 .table-row {
   display: flex;
   justify-content: space-between;
